@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Register</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	<body onload="getHobbies()">
+						<form class="register-form">
+              <ul>
+								<li><input class="input" id="username" type="text" name="username" placeholder="Username" autofocus/></li>
+								<li><input class="input" id="email" type="text" name="email" placeholder="Email"/></li>
+								<li><input class="input" id="firstName" type="text" name="firstName" placeholder="First Name"/></li>
+								<li><input class="input" id="lastName" type="text" name="lastName" placeholder="Last Name"/></li>
+								<li><input type="radio" name="gender" value="male"/> Male
+  							<li><input type="radio" name="gender" value="female"/> Female
+  							<li><input type="radio" name="gender" value="other"/> Other
+                <li><input class="input" id="password" type="password" name="password" placeholder="Password"/></li>
+                <li><input class="input" id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirm Password"/></li>
+								<br/>
+								<br/>
+								<ol id = 'list'></ol>
+                <button class="next-button" onclick='createUser()'> Create Account </button>
+              </ul>
+						</form>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type = 'text/javascript'>
+      function createUser()
+      {
+				var gender = $('input[name="gender"]:checked').val();
+				if($("#password").val() == $("#confirmPassword").val())
+        {
+          $.ajax({
+            type:'POST',
+            url: 'registerUser/',
+            data: {
+							username : $("#username").val(),
+							email : $("#email").val(),
+              password : $("#password").val(),
+							firstName : $("#firstName").val(),
+          		lastName : $("#lastName").val(),
+							gender: gender,
+							dateOfBirth: '1996-09-12',
+            },
+            success: function(data)
+            {
+              if(data[0].success == 'true')
+							{
+
+              }
+
+              else {
+                
+              }
+            }
+          });
+        }
+
+        else {
+          alert("Passwords do not match.");
+        }
+      }
+
+			function getHobbies()
+			{
+				$.ajax({
+					type:'GET',
+					url: 'getHobbies/',
+					dataType: "json",
+					success: this.loadHobbies,
+					error: function(req, err)
+					{
+						console.log('JSON call failed', err);
+					}
+				});
+			}
+
+			function loadHobbies(data)
+			{
+				hobbyList = '';
+				for (var i = 0; i < data.length; i++)
+				{
+					hobbyName = data[i].name;
+					hobbyList += '<li>' +
+														'<a onclick="displayFields(\'' + hobbyName + '\')">' + hobbyName + '</a>' + '</li>';
+				}
+				$("#list").html(hobbyList);
+		}
+  </script>
+	</body>
+</html>
