@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 from .models import UserProfile, Hobby
 
 def index(request):
+    return render(request,'matchingapp/login.html')
+
+def register(request):
     return render(request,'matchingapp/register.html')
 
 def getHobbies(request):
@@ -60,3 +63,26 @@ def validateInput(username, email):
 
     else:
         return False
+
+@csrf_exempt
+def login(request):
+    username = request.POST["username"]
+    password = request.POST["password"]
+
+    try:
+        user = User.objects.get(username=username)
+
+        if(user.check_password(password)):
+            request.session['username'] =username
+            request.session['password'] = password
+
+            data = [{"success":"true","username": username}]
+            return JsonResponse(data, safe=False)
+
+        else:
+            data = [{"success":"false",  "message": "incorrect password"}]
+            return JsonResponse(data, safe=False)
+
+    except User.DoesNotExist:
+        data = [{"success":"false",  "message": "user does not exist"}]
+        return JsonResponse(data, safe=False)

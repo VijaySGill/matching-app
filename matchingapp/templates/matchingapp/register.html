@@ -35,6 +35,9 @@
 								<ol id = 'list'></ol>
 								<label id = "message" style = "display: none;"></label>
                 <button class="next-button" onclick='createUser()'> Create Account </button>
+								<br/>
+								<br/>
+								<a href = "{%url 'index'%}">Login</a>
 						</form>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
@@ -47,7 +50,7 @@
         {
           $.ajax({
             type:'POST',
-            url: 'registerUser/',
+            url: '/matchingapp/registerUser/',
             data: {
 							username : $("#username").val(),
 							email : $("#email").val(),
@@ -90,7 +93,7 @@
 			{
 				$.ajax({
 					type:'GET',
-					url: 'getHobbies/',
+					url: '/matchingapp/getHobbies/',
 					dataType: "json",
 					success: this.loadHobbies,
 					error: function(req, err)

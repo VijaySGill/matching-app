@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Register</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+	<body>
+			<form class="login-form">
+        <input class="input" id="username" type="text" name="username" placeholder="Username" autofocus/>
+        <input class="input" id="password" type="password" name="password" placeholder="Password"/>
+        <br/>
+        <label id = "message" style = "display: none;"></label>
+        <button class="next-button" onclick='loginUser()'> Login </button>
+        <br/>
+        <br/>
+        <a href = "{%url 'register'%}">No account? Click here to register</a>
+      </form>
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+      <script type = 'text/javascript'>
+        function loginUser()
+        {
+          $.ajax({
+            type:'POST',
+            url: '/matchingapp/login/',
+            data: {
+              username: $("#username").val(),
+              password: $("#password").val(),
+            },
+            success: function(data)
+            {
+              if(data[0].success == "true")
+              {
+                $("#message").html("Successful login");
+                $("#message").css("display","inline");
+              }
+
+              else if(data[0].success == "false" && data[0].message == "incorrect password")
+              {
+                $("#message").html("Incorrect login details. Please try again.");
+                $("#message").css("display","inline");
+              }
+
+              else if(data[0].success == "false" && data[0].message == "user does not exist")
+              {
+                $("#message").html("No account matching this username exists. Please try again.");
+                $("#message").css("display","inline");
+              }
+            }
+          });
+
+          event.preventDefault();
+        }
+      </script>
+  </body>
+</html>
