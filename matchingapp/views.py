@@ -17,22 +17,46 @@ def registerUser(request):
     username = request.POST["username"]
     email = request.POST["email"]
 
-    User.objects.filter(username=username).exists()
-    User.objects.filter(email=email).exists()
+    if(validateInput(username, email)):
+        firstName = request.POST["firstName"]
+        lastName = request.POST["lastName"]
+        password = request.POST["password"]
 
-    firstName = request.POST["firstName"]
-    lastName = request.POST["lastName"]
-    password = request.POST["password"]
+        newUser = User.objects.create_user(username, email, password, first_name=firstName, last_name=lastName)
+        newUser.save()
 
-    newUser = User.objects.create_user(username, email, password, first_name=firstName, last_name=lastName)
-    newUser.save()
+        dob = request.POST["dateOfBirth"]
+        userGender = request.POST["gender"]
 
-    dob = request.POST["dateOfBirth"]
-    userGender = request.POST["gender"]
-    UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="")
+        UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="")
 
-        # request.session['username'] = username
-        # request.session['password'] = password
+        request.session['username'] = username
+        request.session['password'] = password
 
-    data = [{"success":"true"}]
-    return JsonResponse(data, safe=False)
+        data = [{"success":"true"}]
+        return JsonResponse(data, safe=False)
+
+    else:
+        data = [{"success":"false"}]
+        return JsonResponse(data, safe=False)
+
+def checkUsername(username):
+    if(User.objects.filter(username=username).exists()):
+        return False
+
+    else:
+        return True
+
+def checkEmail(email):
+    if(User.objects.filter(email=email).exists()):
+        return False
+
+    else:
+        return True
+
+def validateInput(username, email):
+    if(checkUsername(username) and checkEmail(email)):
+        return True
+
+    else:
+        return False

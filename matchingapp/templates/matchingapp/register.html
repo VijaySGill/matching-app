@@ -5,29 +5,44 @@
 		<title>Register</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	</head>
-	<body onload="getHobbies()">
+	<body onload="loadLists()">
 						<form class="register-form">
-              <ul>
-								<li><input class="input" id="username" type="text" name="username" placeholder="Username" autofocus/></li>
-								<li><input class="input" id="email" type="text" name="email" placeholder="Email"/></li>
-								<li><input class="input" id="firstName" type="text" name="firstName" placeholder="First Name"/></li>
-								<li><input class="input" id="lastName" type="text" name="lastName" placeholder="Last Name"/></li>
-								<li><input type="radio" name="gender" value="male"/> Male
-  							<li><input type="radio" name="gender" value="female"/> Female
-  							<li><input type="radio" name="gender" value="other"/> Other
-                <li><input class="input" id="password" type="password" name="password" placeholder="Password"/></li>
-                <li><input class="input" id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirm Password"/></li>
+								<input class="input" id="username" type="text" name="username" placeholder="Username" autofocus/>
+								<input class="input" id="email" type="text" name="email" placeholder="Email"/>
+								<input class="input" id="firstName" type="text" name="firstName" placeholder="First Name"/>
+								<input class="input" id="lastName" type="text" name="lastName" placeholder="Last Name"/>
+								<input type="radio" name="gender" value="male"/> Male
+  							<input type="radio" name="gender" value="female"/> Female
+  							<input type="radio" name="gender" value="other"/> Other
+                <input class="input" id="password" type="password" name="password" placeholder="Password"/>
+                <input class="input" id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirm Password"/>
 								<br/>
+								<br/>
+								<span>
+									<label>Date of Birth</label>
+									<select id="day"></select>
+									<select id="month">
+										<option value="january">January</option><option value="february">February</option>
+										<option value="march">March</option><option value="april">April</option>
+										<option value="may">May</option><option value="june">June</option>
+										<option value="july">July</option><option value="august">August</option>
+										<option value="september">September</option><option value="october">October</option>
+										<option value="november">November</option><option value="december">December</option>
+									</select>
+									<select id="year"></select>
+								</span>
 								<br/>
 								<ol id = 'list'></ol>
+								<label id = "message" style = "display: none;"></label>
                 <button class="next-button" onclick='createUser()'> Create Account </button>
-              </ul>
 						</form>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
-      function createUser()
+
+			function createUser()
       {
 				var gender = $('input[name="gender"]:checked').val();
+				var dob = processDateOfBirth($("#day").find('option:selected').text(), $("#month").find('option:selected').text(), $("#year").find('option:selected').text())
 				if($("#password").val() == $("#confirmPassword").val())
         {
           $.ajax({
@@ -40,20 +55,30 @@
 							firstName : $("#firstName").val(),
           		lastName : $("#lastName").val(),
 							gender: gender,
-							dateOfBirth: '1996-09-12',
+							dateOfBirth: dob,
             },
             success: function(data)
             {
-              if(data[0].success == 'true')
+							if(data[0].success == "true")
 							{
+								$("#message").html("Successfully registered user. Please login.")
+								$("#message").css("display","inline")
+							}
 
-              }
+							else if(data[0].success == "false") {
+								$("#message").html("Username or email is taken. Please try again.")
+								$("#message").css("display","inline")
+							}
+            },
 
-              else {
-                
-              }
-            }
+						error: function(req, err)
+						{
+							$("#message").html("Something went wrong. Please try again.")
+							$("#message").css("display","inline")
+						}
           });
+
+					event.preventDefault();
         }
 
         else {
@@ -85,6 +110,108 @@
 														'<a onclick="displayFields(\'' + hobbyName + '\')">' + hobbyName + '</a>' + '</li>';
 				}
 				$("#list").html(hobbyList);
+		}
+
+		function processDateOfBirth(day, month, year)
+		{
+			console.log(day, month, year);
+
+			if(month === "January")
+			{
+				month = "01";
+			}
+
+			else if(month === "February")
+			{
+				month = "02";
+			}
+
+			else if(month === "March")
+			{
+				month = "03";
+			}
+
+			else if(month === "April")
+			{
+				month = "04";
+			}
+
+			else if(month === "May")
+			{
+				month = "05";
+			}
+
+			else if(month === "June")
+			{
+				month = "06";
+			}
+
+			else if(month === "July")
+			{
+				month = "07";
+			}
+
+			else if(month === "August")
+			{
+				month = "08";
+			}
+
+			else if(month === "September")
+			{
+				month = "09";
+			}
+
+			else if(month === "October")
+			{
+				month = "10";
+			}
+
+			else if(month === "November")
+			{
+				month = "11";
+			}
+
+			else if(month === "December")
+			{
+				month = "12";
+			}
+
+			return `${year}-${month}-${day}`
+		}
+
+		function populateList()
+		{
+			var minDay = 1;
+			var maxDay = 31;
+			dayList = document.getElementById('day');
+
+			for (var i = minDay; i <= maxDay; i++)
+			{
+				 var option = document.createElement('option');
+				 option.value = i;
+				 option.innerHTML = i;
+				 dayList.appendChild(option);
+			}
+
+			var minYear = 1900;
+			var maxYear = new Date().getFullYear();
+			yearList = document.getElementById('year');
+
+			for (i = minYear; i <= maxYear; i++)
+			{
+				 var option = document.createElement('option');
+				 option.value = i;
+				 option.innerHTML = i;
+				 yearList.appendChild(option);
+			}
+
+			yearList.value = maxYear;
+		}
+
+		function loadLists()
+		{
+			getHobbies();
+			populateList();
 		}
   </script>
 	</body>
