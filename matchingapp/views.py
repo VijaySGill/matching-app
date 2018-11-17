@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+import json
 
 from .models import UserProfile, Hobby
 
@@ -25,22 +26,31 @@ def registerUser(request):
         lastName = request.POST["lastName"]
         password = request.POST["password"]
 
+        hobbies = json.loads(request.POST['hobbies'])
+        if not hobbies:
+            data = [{"success":"false", "message":"no hobbies selected"}]
+            return JsonResponse(data, safe=False)
+
         newUser = User.objects.create_user(username, email, password, first_name=firstName, last_name=lastName)
         newUser.save()
 
         dob = request.POST["dateOfBirth"]
         userGender = request.POST["gender"]
 
-        UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="")
+        newProfile = UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="")
 
-        request.session['username'] = username
-        request.session['password'] = password
+        for hobby in hobbies:
+            userHobby = Hobby.objects.get(name=hobby)
+            newProfile.hobby.add(userHobby)
+
+        # request.session['username'] = username
+        # request.session['password'] = password
 
         data = [{"success":"true"}]
         return JsonResponse(data, safe=False)
 
     else:
-        data = [{"success":"false"}]
+        data = [{"success":"false", "message":"user or email taken"}]
         return JsonResponse(data, safe=False)
 
 def checkUsername(username):

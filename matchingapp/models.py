@@ -9,10 +9,10 @@ class Hobby(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    gender = models.CharField(max_length=6, blank=True)
-    dateOfBirth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=6, blank=False)
+    dateOfBirth = models.DateField(null=True, blank=False)
     bio = models.TextField(max_length=500, blank=True)
-    hobby = models.ManyToManyField(Hobby)
+    hobby = models.ManyToManyField(Hobby, blank=False)
     # profileImage = models.ImageField()
 
     def __str__(self):

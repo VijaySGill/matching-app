@@ -32,7 +32,7 @@
 									<select id="year"></select>
 								</span>
 								<br/>
-								<ol id = 'list'></ol>
+								<ul id = 'list'></ul>
 								<label id = "message" style = "display: none;"></label>
                 <button class="next-button" onclick='createUser()'> Create Account </button>
 								<br/>
@@ -45,7 +45,16 @@
 			function createUser()
       {
 				var gender = $('input[name="gender"]:checked').val();
-				var dob = processDateOfBirth($("#day").find('option:selected').text(), $("#month").find('option:selected').text(), $("#year").find('option:selected').text())
+				var dob = processDateOfBirth($("#day").find('option:selected').text(),
+
+				$("#month").find('option:selected').text(), $("#year").find('option:selected').text())
+
+				var selectedHobbies = [];
+				$('#list input:checked').each(function()
+				{
+				    selectedHobbies.push($(this).attr('name'));
+				});
+
 				if($("#password").val() == $("#confirmPassword").val())
         {
           $.ajax({
@@ -59,6 +68,7 @@
           		lastName : $("#lastName").val(),
 							gender: gender,
 							dateOfBirth: dob,
+							hobbies: JSON.stringify(selectedHobbies),
             },
             success: function(data)
             {
@@ -68,8 +78,15 @@
 								$("#message").css("display","inline")
 							}
 
-							else if(data[0].success == "false") {
+							else if(data[0].success == "false" && data[0].message == "user or email taken")
+							{
 								$("#message").html("Username or email is taken. Please try again.")
+								$("#message").css("display","inline")
+							}
+
+							else if(data[0].success == "false" && data[0].message == "no hobbies selected")
+							{
+								$("#message").html("Select atleast one hobby.")
 								$("#message").css("display","inline")
 							}
             },
@@ -110,15 +127,13 @@
 				{
 					hobbyName = data[i].name;
 					hobbyList += '<li>' +
-														'<a onclick="displayFields(\'' + hobbyName + '\')">' + hobbyName + '</a>' + '</li>';
+														'<input type="checkbox" name = "' + hobbyName + '"/>' + hobbyName + '<br>' + '</li>'
 				}
 				$("#list").html(hobbyList);
 		}
 
 		function processDateOfBirth(day, month, year)
 		{
-			console.log(day, month, year);
-
 			if(month === "January")
 			{
 				month = "01";
