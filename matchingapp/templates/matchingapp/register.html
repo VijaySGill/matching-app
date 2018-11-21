@@ -15,8 +15,8 @@
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 	</head>
 	<body onload="loadLists()">
-			<h1 class="header"><a href="/">Matching App</a></h1>
-			<form class="register-form container">
+			<h1 class="header"><a href="/matchingapp/home">Matching App</a></h1>
+			<form id="form" class="register-form container">
 					<div class="form-group">
 						<label for="username">Username</label>
 						<input class="input form-control" id="username" type="text" name="username" placeholder="Username" autofocus/>
@@ -142,7 +142,7 @@
 				{
 					hobbyName = data[i].name;
 					hobbyList += '<li>' +
-														'<input type="checkbox" name = "' + hobbyName + '"/>' + hobbyName + '<br>' + '</li>'
+														'<input type="checkbox" name = "' + hobbyName + '"/> ' + hobbyName + '<br>' + '</li>'
 				}
 				$("#list").html(hobbyList);
 		}

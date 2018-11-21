@@ -1,3 +1,14 @@
+#form{
+  color: white;
+  background: linear-gradient(90deg, #FC466B 0%, #3F5EFB 100%);
+  border-radius: 5px;
+  padding: 40px;
+  margin: 150px auto;
+  -webkit-box-shadow: -1px 3px 18px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: -1px 3px 18px 0px rgba(0,0,0,0.75);
+  box-shadow: -1px 3px 18px 0px rgba(0,0,0,0.75);
+}
+
 #list{
   list-style-type: none;
 }
