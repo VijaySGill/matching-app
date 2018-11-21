@@ -7,7 +7,10 @@ import json
 from .models import UserProfile, Hobby
 
 def index(request):
-    return render(request,'matchingapp/login.html')
+    return render(request,'matchingapp/home.html')
+
+def loginPage(request):
+    return render(request, 'matchingapp/login.html')
 
 def register(request):
     return render(request,'matchingapp/register.html')
@@ -15,6 +18,16 @@ def register(request):
 def getHobbies(request):
     hobbies = list(Hobby.objects.all().values())
     return JsonResponse(hobbies, safe=False)
+
+@csrf_exempt
+def authenticate(request):
+    if 'username' in request.session:
+        data = [{"success":True, "username":request.session['username']}]
+        return JsonResponse(data, safe=False)
+
+    else:
+        data = [{"success":"false"}]
+        return JsonResponse(data, safe=False)
 
 @csrf_exempt
 def registerUser(request):
@@ -43,8 +56,8 @@ def registerUser(request):
             userHobby = Hobby.objects.get(name=hobby)
             newProfile.hobby.add(userHobby)
 
-        # request.session['username'] = username
-        # request.session['password'] = password
+        request.session['username'] = username
+        request.session['password'] = password
 
         data = [{"success":"true"}]
         return JsonResponse(data, safe=False)
@@ -83,7 +96,7 @@ def login(request):
         user = User.objects.get(username=username)
 
         if(user.check_password(password)):
-            request.session['username'] =username
+            request.session['username'] = username
             request.session['password'] = password
 
             data = [{"success":"true","username": username}]
@@ -95,4 +108,17 @@ def login(request):
 
     except User.DoesNotExist:
         data = [{"success":"false",  "message": "user does not exist"}]
+        return JsonResponse(data, safe=False)
+
+@csrf_exempt
+def logout(request):
+    if 'username' in request.session:
+        request.session.flush()
+        print("---------USER LOGGED OUT------------------")
+        data = [{"success":"true"}]
+
+        return JsonResponse(data, safe=False)
+
+    else:
+        data = [{"success":"false"}]
         return JsonResponse(data, safe=False)

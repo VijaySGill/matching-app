@@ -40,8 +40,8 @@
             },
             success: function(data){
               if(data[0].success == "true"){
-                $("#message").html("Successful login");
-                $("#message").css("display","inline");
+								console.log("Logged In");
+								returnHome();
               }
               else if(data[0].success == "false" && data[0].message == "incorrect password"){
                 $("#message").html("Incorrect login details. Please try again.");
@@ -55,6 +55,11 @@
           });
           event.preventDefault();
         }
+
+				function returnHome()
+				{
+					window.location = '/matchingapp/';
+				}
       </script>
   </body>
 </html>
