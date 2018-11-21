@@ -26,7 +26,7 @@ def authenticate(request):
         return JsonResponse(data, safe=False)
 
     else:
-        data = [{"success":"false"}]
+        data = [{"success": False}]
         return JsonResponse(data, safe=False)
 
 @csrf_exempt
