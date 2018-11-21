@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Home</title>
+	</head>
+	<body onload="checkLoginStatus()">
+    <h1> Successfully logged in </h1>
+
+    <button onclick='logoutUser()'> Logout </button>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type = 'text/javascript'>
+      function authenticateUser()
+      {
+        var loggedIn = false;
+        $.ajax({
+           async: false,
+           type: 'GET',
+           url: 'authenticate/',
+           dataType: 'json',
+           success: function(data)
+           {
+              loggedIn = data[0].success
+           }
+        });
+
+        console.log(loggedIn);
+
+        return loggedIn;
+      }
+
+      function checkLoginStatus()
+      {
+        var flag = authenticateUser();
+
+        if(!flag)
+        {
+          returnToLogin();
+        }
+      }
+
+      function logoutUser()
+      {
+            $.ajax({
+              type:'POST',
+              url: 'logout/',
+              success: function(data)
+              {
+                returnToLogin();
+              }
+            });
+      }
+
+      function returnToLogin()
+      {
+        window.location = '/matchingapp/loginPage';
+      }
+    </script>
+  </body>
+</html>
