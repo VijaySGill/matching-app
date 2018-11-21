@@ -5,7 +5,7 @@
 		<title>Register</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		{% load static %}
-		<link rel="stylesheet" type="text/css" href="{% static 'matchingapp/style.css' %}">
+		<link rel="stylesheet" type="text/css" href="{% static 'matchingapp/registerstyle.css' %}">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 		<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
@@ -67,22 +67,18 @@
 						</form>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
-
-			function createUser()
-      {
+			function createUser(){
 				var gender = $('input[name="gender"]:checked').val();
 				var dob = processDateOfBirth($("#day").find('option:selected').text(),
 
 				$("#month").find('option:selected').text(), $("#year").find('option:selected').text())
 
 				var selectedHobbies = [];
-				$('#list input:checked').each(function()
-				{
+				$('#list input:checked').each(function(){
 				    selectedHobbies.push($(this).attr('name'));
 				});
 
-				if($("#password").val() == $("#confirmPassword").val())
-        {
+				if($("#password").val() == $("#confirmPassword").val()){
           $.ajax({
             type:'POST',
             url: '/matchingapp/registerUser/',
@@ -96,34 +92,25 @@
 							dateOfBirth: dob,
 							hobbies: JSON.stringify(selectedHobbies),
             },
-            success: function(data)
-            {
-							if(data[0].success == "true")
-							{
+            success: function(data){
+							if(data[0].success == "true"){
 								$("#message").html("Successfully registered user. Please login.")
 								$("#message").css("display","inline")
 							}
-
-							else if(data[0].success == "false" && data[0].message == "user or email taken")
-							{
+							else if(data[0].success == "false" && data[0].message == "user or email taken"){
 								$("#message").html("Username or email is taken. Please try again.")
 								$("#message").css("display","inline")
 							}
-
-							else if(data[0].success == "false" && data[0].message == "no hobbies selected")
-							{
+							else if(data[0].success == "false" && data[0].message == "no hobbies selected"){
 								$("#message").html("Select atleast one hobby.")
 								$("#message").css("display","inline")
 							}
             },
-
-						error: function(req, err)
-						{
+						error: function(req, err){
 							$("#message").html("Something went wrong. Please try again.")
 							$("#message").css("display","inline")
 						}
           });
-
 					event.preventDefault();
         }
 
@@ -132,8 +119,7 @@
         }
       }
 
-			function getHobbies()
-			{
+			function getHobbies(){
 				$.ajax({
 					type:'GET',
 					url: '/matchingapp/getHobbies/',
