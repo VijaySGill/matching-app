@@ -66,7 +66,7 @@
           <button class="next-button btn btn-primary" onclick='createUser()'> Create Account </button>
 					<br/>
 					<br/>
-					<a href = "{%url 'loginPage'%}">Login</a>
+					<a id="loginbtn" href = "{%url 'loginPage'%}">Got an account? Login</a>
 			</form>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
@@ -116,7 +116,6 @@
           });
 					event.preventDefault();
         }
-
         else {
           alert("Passwords do not match.");
         }
@@ -135,11 +134,9 @@
 				});
 			}
 
-			function loadHobbies(data)
-			{
+			function loadHobbies(data){
 				hobbyList = '';
-				for (var i = 0; i < data.length; i++)
-				{
+				for (var i = 0; i < data.length; i++){
 					hobbyName = data[i].name;
 					hobbyList += '<li>' +
 														'<input type="checkbox" name = "' + hobbyName + '"/> ' + hobbyName + '<br>' + '</li>'
@@ -147,102 +144,47 @@
 				$("#list").html(hobbyList);
 		}
 
-		function processDateOfBirth(day, month, year)
-		{
-			if(month === "January")
-			{
-				month = "01";
-			}
-
-			else if(month === "February")
-			{
-				month = "02";
-			}
-
-			else if(month === "March")
-			{
-				month = "03";
-			}
-
-			else if(month === "April")
-			{
-				month = "04";
-			}
-
-			else if(month === "May")
-			{
-				month = "05";
-			}
-
-			else if(month === "June")
-			{
-				month = "06";
-			}
-
-			else if(month === "July")
-			{
-				month = "07";
-			}
-
-			else if(month === "August")
-			{
-				month = "08";
-			}
-
-			else if(month === "September")
-			{
-				month = "09";
-			}
-
-			else if(month === "October")
-			{
-				month = "10";
-			}
-
-			else if(month === "November")
-			{
-				month = "11";
-			}
-
-			else if(month === "December")
-			{
-				month = "12";
-			}
-
+		function processDateOfBirth(day, month, year){
+			if(month === "January"){ month = "01"; }
+			else if(month === "February"){ month = "02"; }
+			else if(month === "March"){ month = "03"; }
+			else if(month === "April"){ month = "04"; }
+			else if(month === "May"){ month = "05"; }
+			else if(month === "June"){ month = "06"; }
+			else if(month === "July"){ month = "07"; }
+			else if(month === "August"){ month = "08"; }
+			else if(month === "September"){ month = "09"; }
+			else if(month === "October"){ month = "10"; }
+			else if(month === "November"){ month = "11"; }
+			else if(month === "December"){ month = "12"; }
 			return `${year}-${month}-${day}`
 		}
 
-		function populateList()
-		{
+		function populateList(){
 			var minDay = 1;
 			var maxDay = 31;
 			dayList = document.getElementById('day');
 
-			for (var i = minDay; i <= maxDay; i++)
-			{
+			for (var i = minDay; i <= maxDay; i++){
 				 var option = document.createElement('option');
 				 option.value = i;
 				 option.innerHTML = i;
 				 dayList.appendChild(option);
 			}
-
 			var minYear = 1900;
 			var maxYear = new Date().getFullYear();
 			yearList = document.getElementById('year');
 
-			for (i = minYear; i <= maxYear; i++)
-			{
+			for (i = minYear; i <= maxYear; i++){
 				 var option = document.createElement('option');
 				 option.value = i;
 				 option.innerHTML = i;
 				 yearList.appendChild(option);
 			}
-
 			yearList.value = maxYear;
 		}
 
-		function loadLists()
-		{
+		function loadLists(){
 			getHobbies();
 			populateList();
 		}

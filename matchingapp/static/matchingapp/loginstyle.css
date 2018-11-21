@@ -19,3 +19,8 @@
 .input-group-addon span{
   color: #FC466B;
 }
+
+#loginbtn:hover{
+  color: #ffffff;
+  background: linear-gradient(90deg, #FC466B 0%, #3F5EFB 100%);
+}
