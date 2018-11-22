@@ -11,47 +11,38 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
-      function authenticateUser()
-      {
+      function authenticateUser(){
         var loggedIn = false;
         $.ajax({
            async: false,
            type: 'GET',
            url: 'authenticate/',
            dataType: 'json',
-           success: function(data)
-           {
+           success: function(data){
               loggedIn = data[0].success
            }
         });
-
         return loggedIn;
       }
 
-      function checkLoginStatus()
-      {
+      function checkLoginStatus(){
         var flag = authenticateUser();
-
-        if(flag === false)
-        {
+        if(flag === false){
           returnToLogin();
         }
       }
 
-      function logoutUser()
-      {
+      function logoutUser(){
             $.ajax({
               type:'POST',
               url: 'logout/',
-              success: function(data)
-              {
+              success: function(data){
                 returnToLogin();
               }
             });
       }
 
-      function returnToLogin()
-      {
+      function returnToLogin(){
         window.location = '/matchingapp/loginPage';
       }
     </script>
