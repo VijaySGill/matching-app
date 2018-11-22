@@ -6,6 +6,9 @@ import json
 
 from .models import UserProfile, Hobby
 
+# Global scope
+currentAccount = ""
+
 def index(request):
     return render(request,'matchingapp/home.html')
 
@@ -69,21 +72,18 @@ def registerUser(request):
 def checkUsername(username):
     if(User.objects.filter(username=username).exists()):
         return False
-
     else:
         return True
 
 def checkEmail(email):
     if(User.objects.filter(email=email).exists()):
         return False
-
     else:
         return True
 
 def validateInput(username, email):
     if(checkUsername(username) and checkEmail(email)):
         return True
-
     else:
         return False
 
@@ -91,7 +91,6 @@ def validateInput(username, email):
 def login(request):
     username = request.POST["username"]
     password = request.POST["password"]
-
     try:
         user = User.objects.get(username=username)
 
@@ -99,6 +98,7 @@ def login(request):
             request.session['username'] = username
             request.session['password'] = password
 
+            currentAccount = username
             data = [{"success":"true","username": username}]
             return JsonResponse(data, safe=False)
 
@@ -122,3 +122,10 @@ def logout(request):
     else:
         data = [{"success":"false"}]
         return JsonResponse(data, safe=False)
+
+
+def lookupMatches(request):
+    allAccounts = User.object.all().values()
+    user = User.objects.get(username=username)
+
+    

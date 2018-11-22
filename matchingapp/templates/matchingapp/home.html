@@ -62,6 +62,21 @@
         if(flag === false){
           returnToLogin();
         }
+				else{
+					loadUsers();
+				}
+      }
+
+			function loadUsers(){
+        $.ajax({
+           async: false,
+           type: 'GET',
+           url: '/matchingapp/lookupMatches/',
+           dataType: 'json',
+           success: function(data){
+
+           }
+        });
       }
 
       $(document).on('click', '#logout', function (e){
