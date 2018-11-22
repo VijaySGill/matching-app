@@ -30,35 +30,35 @@
 			<!-- /.Form -->
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
       <script type = 'text/javascript'>
-        function loginUser(){
-          $.ajax({
-            type:'POST',
-            url: '/matchingapp/login/',
-            data: {
-              username: $("#username").val(),
-              password: $("#password").val(),
-            },
-            success: function(data){
-              if(data[0].success == "true"){
-								console.log("Logged In");
-								returnHome();
-              }
-              else if(data[0].success == "false" && data[0].message == "incorrect password"){
-                $("#message").html("Incorrect login details. Please try again.");
-                $("#message").css("display","inline");
-              }
-              else if(data[0].success == "false" && data[0].message == "user does not exist"){
-                $("#message").html("No account matching this username exists. Please try again.");
-                $("#message").css("display","inline");
-              }
-            }
-          });
-          event.preventDefault();
-        }
+        	function loginUser(){
+	          $.ajax({
+	            type:'POST',
+	            url: '/matchingapp/login/',
+	            data: {
+	              username: $("#username").val(),
+	              password: $("#password").val(),
+	            },
+	            success: function(data){
+	              if(data[0].success == "true"){
+									console.log("Logged In");
+									returnHome();
+	              }
+	              else if(data[0].success == "false" && data[0].message == "incorrect password"){
+	                $("#message").html("Incorrect login details. Please try again.");
+	                $("#message").css("display","inline");
+	              }
+	              else if(data[0].success == "false" && data[0].message == "user does not exist"){
+	                $("#message").html("No account matching this username exists. Please try again.");
+	                $("#message").css("display","inline");
+	              }
+	            }
+	          });
+	          event.preventDefault();
+	        }
 
-				function returnHome(){
-					window.location = '/matchingapp/home';
-				}
+					function returnHome(){
+						window.location = '/matchingapp/home';
+					}
       </script>
 			{% endblock %}
 		</body>

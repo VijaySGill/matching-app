@@ -58,124 +58,124 @@
 			</form>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
-			function createUser(){
-				var gender = $('input[name="gender"]:checked').val();
-				var dob = processDateOfBirth($("#day").find('option:selected').text(),
+					function createUser(){
+					var gender = $('input[name="gender"]:checked').val();
+					var dob = processDateOfBirth($("#day").find('option:selected').text(),
 
-				$("#month").find('option:selected').text(), $("#year").find('option:selected').text())
+					$("#month").find('option:selected').text(), $("#year").find('option:selected').text())
 
-				var selectedHobbies = [];
-				$('#list input:checked').each(function(){
-				    selectedHobbies.push($(this).attr('name'));
-				});
+					var selectedHobbies = [];
+					$('#list input:checked').each(function(){
+					    selectedHobbies.push($(this).attr('name'));
+					});
 
-				if($("#password").val() == $("#confirmPassword").val()){
-          $.ajax({
-            type:'POST',
-            url: '/matchingapp/registerUser/',
-            data: {
-							username : $("#username").val(),
-							email : $("#email").val(),
-              password : $("#password").val(),
-							firstName : $("#firstName").val(),
-          		lastName : $("#lastName").val(),
-							gender: gender,
-							dateOfBirth: dob,
-							hobbies: JSON.stringify(selectedHobbies),
-            },
-            success: function(data){
-							if(data[0].success == "true"){
-								$("#message").html("Successfully registered user. Please login.")
+					if($("#password").val() == $("#confirmPassword").val()){
+	          $.ajax({
+	            type:'POST',
+	            url: '/matchingapp/registerUser/',
+	            data: {
+								username : $("#username").val(),
+								email : $("#email").val(),
+	              password : $("#password").val(),
+								firstName : $("#firstName").val(),
+	          		lastName : $("#lastName").val(),
+								gender: gender,
+								dateOfBirth: dob,
+								hobbies: JSON.stringify(selectedHobbies),
+	            },
+	            success: function(data){
+								if(data[0].success == "true"){
+									$("#message").html("Successfully registered user. Please login.")
+									$("#message").css("display","inline")
+								}
+								else if(data[0].success == "false" && data[0].message == "user or email taken"){
+									$("#message").html("Username or email is taken. Please try again.")
+									$("#message").css("display","inline")
+								}
+								else if(data[0].success == "false" && data[0].message == "no hobbies selected"){
+									$("#message").html("Select atleast one hobby.")
+									$("#message").css("display","inline")
+								}
+	            },
+							error: function(req, err){
+								$("#message").html("Something went wrong. Please try again.")
 								$("#message").css("display","inline")
 							}
-							else if(data[0].success == "false" && data[0].message == "user or email taken"){
-								$("#message").html("Username or email is taken. Please try again.")
-								$("#message").css("display","inline")
-							}
-							else if(data[0].success == "false" && data[0].message == "no hobbies selected"){
-								$("#message").html("Select atleast one hobby.")
-								$("#message").css("display","inline")
-							}
-            },
-						error: function(req, err){
-							$("#message").html("Something went wrong. Please try again.")
-							$("#message").css("display","inline")
+	          });
+						event.preventDefault();
+	        }
+	        else {
+	          alert("Passwords do not match.");
+	        }
+	      }
+
+				function getHobbies(){
+					$.ajax({
+						type:'GET',
+						url: '/matchingapp/getHobbies/',
+						dataType: "json",
+						success: this.loadHobbies,
+						error: function(req, err)
+						{
+							console.log('JSON call failed', err);
 						}
-          });
-					event.preventDefault();
-        }
-        else {
-          alert("Passwords do not match.");
-        }
-      }
-
-			function getHobbies(){
-				$.ajax({
-					type:'GET',
-					url: '/matchingapp/getHobbies/',
-					dataType: "json",
-					success: this.loadHobbies,
-					error: function(req, err)
-					{
-						console.log('JSON call failed', err);
-					}
-				});
-			}
-
-			function loadHobbies(data){
-				hobbyList = '';
-				for (var i = 0; i < data.length; i++){
-					hobbyName = data[i].name;
-					hobbyList += '<li>' +
-														'<input type="checkbox" name = "' + hobbyName + '"/> ' + hobbyName + '<br>' + '</li>'
+					});
 				}
-				$("#list").html(hobbyList);
-		}
 
-		function processDateOfBirth(day, month, year){
-			if(month === "January"){ month = "01"; }
-			else if(month === "February"){ month = "02"; }
-			else if(month === "March"){ month = "03"; }
-			else if(month === "April"){ month = "04"; }
-			else if(month === "May"){ month = "05"; }
-			else if(month === "June"){ month = "06"; }
-			else if(month === "July"){ month = "07"; }
-			else if(month === "August"){ month = "08"; }
-			else if(month === "September"){ month = "09"; }
-			else if(month === "October"){ month = "10"; }
-			else if(month === "November"){ month = "11"; }
-			else if(month === "December"){ month = "12"; }
-			return `${year}-${month}-${day}`
-		}
-
-		function populateList(){
-			var minDay = 1;
-			var maxDay = 31;
-			dayList = document.getElementById('day');
-
-			for (var i = minDay; i <= maxDay; i++){
-				 var option = document.createElement('option');
-				 option.value = i;
-				 option.innerHTML = i;
-				 dayList.appendChild(option);
+				function loadHobbies(data){
+					hobbyList = '';
+					for (var i = 0; i < data.length; i++){
+						hobbyName = data[i].name;
+						hobbyList += '<li>' +
+															'<input type="checkbox" name = "' + hobbyName + '"/> ' + hobbyName + '<br>' + '</li>'
+					}
+					$("#list").html(hobbyList);
 			}
-			var minYear = 1900;
-			var maxYear = new Date().getFullYear();
-			yearList = document.getElementById('year');
 
-			for (i = minYear; i <= maxYear; i++){
-				 var option = document.createElement('option');
-				 option.value = i;
-				 option.innerHTML = i;
-				 yearList.appendChild(option);
+			function processDateOfBirth(day, month, year){
+				if(month === "January"){ month = "01"; }
+				else if(month === "February"){ month = "02"; }
+				else if(month === "March"){ month = "03"; }
+				else if(month === "April"){ month = "04"; }
+				else if(month === "May"){ month = "05"; }
+				else if(month === "June"){ month = "06"; }
+				else if(month === "July"){ month = "07"; }
+				else if(month === "August"){ month = "08"; }
+				else if(month === "September"){ month = "09"; }
+				else if(month === "October"){ month = "10"; }
+				else if(month === "November"){ month = "11"; }
+				else if(month === "December"){ month = "12"; }
+				return `${year}-${month}-${day}`
 			}
-			yearList.value = maxYear;
-		}
 
-		function loadLists(){
-			getHobbies();
-			populateList();
-		}
+			function populateList(){
+				var minDay = 1;
+				var maxDay = 31;
+				dayList = document.getElementById('day');
+
+				for (var i = minDay; i <= maxDay; i++){
+					 var option = document.createElement('option');
+					 option.value = i;
+					 option.innerHTML = i;
+					 dayList.appendChild(option);
+				}
+				var minYear = 1900;
+				var maxYear = new Date().getFullYear();
+				yearList = document.getElementById('year');
+
+				for (i = minYear; i <= maxYear; i++){
+					 var option = document.createElement('option');
+					 option.value = i;
+					 option.innerHTML = i;
+					 yearList.appendChild(option);
+				}
+				yearList.value = maxYear;
+			}
+
+			function loadLists(){
+				getHobbies();
+				populateList();
+			}
   </script>
 	{% endblock %}
 	</body>
