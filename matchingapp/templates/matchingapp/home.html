@@ -1,12 +1,46 @@
 {% extends 'matchingapp/base.html' %}
 		{% load static %}
 		{% block title %}<title>Home</title>{% endblock %}
+		{% block stylesheet %}<link rel="stylesheet" type="text/css" href="{% static 'matchingapp/home.css' %}">{% endblock %}
 	{% block body %}<body onload="checkLoginStatus()">{% endblock %}
 		{% block content %}
-    <h1> Successfully logged in </h1>
-
-    <button id="logout">Logouts</button>
-
+		<div class="bodStyle container">
+	    <br/><h1> Welcome to Vijay Island! </h1><br/>
+			<p></p>
+			<div class="row">
+				<div class="col">
+					<div class="card" style="width: 18rem;">
+					  <img class="card-img-top" src="..." alt="Card image cap">
+					  <div class="card-body">
+					    <h5 class="card-title">Name</h5>
+					    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+					    <a href="#" class="btn btnCard">Like Profile <span><i class="fas fa-thumbs-up"></i></a>
+					  </div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card" style="width: 18rem;">
+					  <img class="card-img-top" src="..." alt="Card image cap">
+					  <div class="card-body">
+					    <h5 class="card-title">Name</h5>
+					    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+					    <a href="#" class="btn btnCard">Like Profile <span><i class="fas fa-thumbs-up"></i></a>
+					  </div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="card" style="width: 18rem;">
+					  <img class="card-img-top" src="..." alt="Card image cap">
+					  <div class="card-body">
+					    <h5 class="card-title">Name</h5>
+					    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+					    <a href="#" class="btn btnCard">Like Profile <span><i class="fas fa-thumbs-up"></i></span></a>
+					  </div>
+					</div>
+				</div>
+			</div>
+		</div>
+    <button class="btn btn-col" id="logout">Logout <span><i class="fas fa-sign-out-alt"></i></span></button>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
       function authenticateUser(){
