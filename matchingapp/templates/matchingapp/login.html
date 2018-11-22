@@ -3,7 +3,7 @@
 		{% block title %}<title>Login</title>{% endblock %}
 		{% block stylesheet %}<link rel="stylesheet" type="text/css" href="{% static 'matchingapp/loginstyle.css' %}">{% endblock %}
 	{% block body %}<body>{% endblock %}
-		{% block content %}
+			{% block content %}
 			<!-- Form -->
 			<div class="form-box">
 				<form class="login-form container">
@@ -30,8 +30,7 @@
 			<!-- /.Form -->
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
       <script type = 'text/javascript'>
-        function loginUser()
-        {
+        function loginUser(){
           $.ajax({
             type:'POST',
             url: '/matchingapp/login/',
@@ -62,5 +61,5 @@
 				}
       </script>
 			{% endblock %}
-  </body>
+		</body>
 </html>

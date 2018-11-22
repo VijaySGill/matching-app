@@ -1,25 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>Home</title>
-	</head>
-	<body>
+{% extends 'matchingapp/base.html' %}
+		{% load static %}
+		{% block title %}<title>Home</title>{% endblock %}
+	{% block body %}<body>{% endblock %}
+		{% block content %}
     <h1> Successfully logged in </h1>
 
-    <button id="logout"> Logout </button>
+    <button id="logout">Logouts</button>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
 		$( document ).ready(function() {
 			window.onload = checkLoginStatus;
-			
+
       function authenticateUser(){
         var loggedIn = false;
         $.ajax({
            async: false,
            type: 'GET',
-           url: 'authenticate/',
+           url: '/matchingapp/authenticate/',
            dataType: 'json',
            success: function(data){
               loggedIn = data[0].success
@@ -35,11 +33,11 @@
         }
       }
 
-      $("#logout").on('click', function(e){
+      $(document).on('click', '#logout', function (e){
 				e.preventDefault();
         $.ajax({
           type:'POST',
-          url: 'logout/',
+          url: '/matchingapp/logout/',
           success: function(data){
             returnToLogin();
           }
@@ -52,4 +50,5 @@
 		});
     </script>
   </body>
+	{% endblock %}
 </html>
