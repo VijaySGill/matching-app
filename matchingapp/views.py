@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from django.forms.models import model_to_dict
 import json
 
 from .models import UserProfile, Hobby
@@ -123,9 +124,56 @@ def logout(request):
         data = [{"success":"false"}]
         return JsonResponse(data, safe=False)
 
+def profile(request):
+    return render(request,'matchingapp/profile.html')
+
+@csrf_exempt
+def loadUser(request):
+    username = request.POST["username"]
+    user = User.objects.get(username=username)
+    userProfile = UserProfile.objects.get(user=user)
+    data = [{
+        "success": "true",
+        "id": user.id,
+        "username": user.username,
+        "firstName": user.first_name,
+        "lastName": user.last_name,
+        "dob": userProfile.dateOfBirth,
+        "bio": userProfile.bio,
+        "gender": userProfile.gender,
+    }]
+    return JsonResponse(data, safe=False)
+
+@csrf_exempt
+def update(request):
+    userID = request.POST['id']
+    newUsername = request.POST['username']
+    newFirstName = request.POST['firstName']
+    newLastName = request.POST['lastName']
+    newDOB = request.POST['dateOfBirth']
+    newBio = request.POST['bio']
+    newGender = request.POST['gender']
+
+    user = User.objects.get(id=userID)
+    profile = UserProfile.objects.get(user=user)
+
+    user.username = newUsername
+    user.first_name = newFirstName
+    user.last_name = newLastName
+
+    profile.dateOfBirth = newDOB
+    profile.bio = newBio
+    profile.gender = newGender
+
+    user.save()
+    profile.save()
+
+    request.session['username'] = newUsername
+
+    return JsonResponse({"success": True}, safe=False)
 
 def lookupMatches(request):
-    allAccounts = User.object.all().values()
-    user = User.objects.get(username=username)
+    allAccounts = UserProfile.hobby
+    matches = []
 
-    
+    print(allAccounts)
