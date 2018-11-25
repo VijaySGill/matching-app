@@ -2,6 +2,11 @@ body{
     font-family: 'Roboto', sans-serif;
 }
 
+.btn-col{
+  background-color: #FC466B !important;
+  color: #ffffff;
+}
+
 .header{
   font: 400 100px/1.5 'Pacifico', Helvetica, sans-serif;
   text-align: center;

@@ -1,13 +1,28 @@
 {% extends 'matchingapp/base.html' %}
 		{% load static %}
 		{% block title %}<title>Profile</title>{% endblock %}
+		{% block stylesheet %} <link type="text/css" href="{% static 'matchingapp/profile.css' %}">{% endblock %}
 {% block body %}<body onload="obtainUser()"> {% endblock %}
 {% block content %}
-  <input id="id" type="text" name="id" hidden/>
-      Username: <input id="username" type="text" name="username" placeholder="Username"/>
-      First Name: <input id="firstName" type="text" name="firstName" placeholder="First Name"/>
-      Last Name: <input id="lastName" type="text" name="lastName" placeholder="Last Name"/>
-      Age: <input id="age" type="text" name="age" placeholder="Age" readonly/>
+<br/>
+  <div class="container">
+    <input id="id" type="text" name="id" hidden/>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input id="username" class="form-control" type="text" name="username" placeholder="Username"/>
+    </div>
+    <div class="form-group">
+      <label for="firstName">First Name</label>
+      <input id="firstName" class="form-control" type="text" name="firstName" placeholder="First Name"/>
+    </div>
+    <div class="form-group">
+      <label for="lastName">Last Name</label>
+      <input id="lastName" class="form-control" type="text" name="lastName" placeholder="Last Name"/>
+    </div>
+    <div class="form-group">
+      <label for="age">Age</label>
+			<input id="age" class="form-control" type="text" name="age" placeholder="Age" readonly/>
+    </div>
   <label for="gender">Gender:</label>
   <input type="radio" name="gender" value="male"/> Male
   <input type="radio" name="gender" value="female"/> Female
@@ -27,12 +42,13 @@
   <select id="year"></select>
   </span>
       <br/>
-      Bio: <textarea name="bio" id="bio" rows="8" cols="80" placeholder="Bio"></textarea>
-
+      Bio: <textarea name="bio" id="bio" class="form-control" rows="8" cols="80" placeholder="Bio"></textarea>
       <br/>
       <br/>
-  <button onclick='updateUser()'> Update Profile </button>
-      <a href = "{%url 'index'%}">Home</a>
+      <button class="btn btn-danger btn-col" onclick="updateUser()"> Update Profile </button>
+      <a class="btn btn-primary" href = "{%url 'index'%}">Home</a>
+			<br/><br/>
+    </div>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
