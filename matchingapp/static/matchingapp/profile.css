@@ -1,4 +1,6 @@
-.form-control:focus {
-  border-color: #FF0000;
-  box-shadow: inset 0 1px 1px #FC466B , 0 0 8px #FC466B ;
+label{
+  background: -webkit-linear-gradient(90deg, #FC466B 0%, #3F5EFB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
 }
