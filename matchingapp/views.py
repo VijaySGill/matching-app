@@ -173,7 +173,7 @@ def update(request):
     return JsonResponse({"success": True}, safe=False)
 
 def lookupMatches(request):
-    allAccounts = UserProfile.hobby
+    allAccounts = UserProfile.hobby.all()
     matches = []
 
     print(allAccounts)
