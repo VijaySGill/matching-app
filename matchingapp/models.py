@@ -13,7 +13,7 @@ class UserProfile(models.Model):
     dateOfBirth = models.DateField(null=True, blank=False)
     bio = models.TextField(max_length=500, blank=True)
     hobby = models.ManyToManyField(Hobby, blank=False)
-    # profileImage = models.ImageField()
+    profileImage = models.ImageField(upload_to='profile_image', blank=True)
 
     def __str__(self):
         return self.user.get_username()

@@ -127,6 +127,9 @@ def logout(request):
 def profile(request):
     return render(request,'matchingapp/profile.html')
 
+def settings(request):
+    return render(request,'matchingapp/settings.html')
+
 @csrf_exempt
 def loadUser(request):
     username = request.POST["username"]
