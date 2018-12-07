@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
@@ -174,6 +174,14 @@ def update(request):
     request.session['username'] = newUsername
 
     return JsonResponse({"success": True}, safe=False)
+
+@csrf_exempt
+def delete(request):
+    body = json.loads(request.body.decode('utf-8'))
+    item = body['id']
+    post = User.objects.get(id=item)
+    post.delete()
+    return HttpResponse("success")
 
 def lookupMatches(request):
     allAccounts = UserProfile.hobby.all()

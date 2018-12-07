@@ -1,11 +1,12 @@
 {% extends 'matchingapp/base.html' %}
 		{% load static %}
 		{% block title %}<title>Settings</title>{% endblock %}
-		{% block stylesheet %} <link rel="stylesheet" type="text/css" href="{% static 'matchingapp/profile.css' %}">{% endblock %}
+		{% block stylesheet %} <link rel="stylesheet" type="text/css" href="{% static 'matchingapp/settings.css' %}">{% endblock %}
 {% block body %}<body onload="obtainUser()"> {% endblock %}
 {% block content %}
 	<br/>
   <div class="container">
+		<h3 class="subheaders">| Profile</h3>
     <input id="id" type="text" name="id" hidden/>
     <div class="form-group">
       <label for="username">Username</label>
@@ -62,10 +63,26 @@
       	<label for="bio">Bio</label>
 				<textarea name="bio" id="bio" class="form-control" rows="8" cols="80" placeholder="Bio"></textarea>
 			</div>
-      <button class="btn btn-danger btn-col" onclick="updateUser()"> Update Profile </button>
-      <a class="btn btn-primary" href = "{%url 'index'%}">Home</a>
+      <button class="btn btn-primary" onclick="updateUser()"> Update Profile </button>
 			<br/><br/>
     </div>
+		<div class="container">
+			<h3 class="subheaders">| Account</h3>
+			<br/>
+			<div id="account">
+				<div class="container">
+					<br/>
+					<div class="row">
+						<div class="col-sm-8"><h5>Delete Account</h5>
+						<p>This permanently deletes the account</p></div>
+						<div class="col-sm-4">
+							<button class="delete btn btn-account">Delete Account</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br/>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
@@ -195,11 +212,11 @@
 			  yearList.value = maxYear;
 		  }
 
-		      function obtainUser(){
-		  			populateList();
-		  			var user = authenticateUser();
-		        loadUserInfo(user);
-		      }
+      function obtainUser(){
+  			populateList();
+  			var user = authenticateUser();
+        loadUserInfo(user);
+      }
 
 		  function updateUser(name){
 		  	dob = processNewDateOfBirth();
@@ -234,6 +251,24 @@
 
 			  return `${year}-${month}-${day}`
 		  }
+
+			$(document).on('click', '.delete', function () {
+        if (confirm("Are you sure you want to delete this?")){
+          var id = $("#id").val();
+          $.ajax({
+            type: "DELETE",
+            url: "/matchingapp/delete/",
+            data: JSON.stringify({'id': id}),
+            success: function() {
+                console.log("Success");
+								returnToLogin();
+            },
+            error: function(req, status, err){
+                console.log("Something went wrong", status, err)
+            },
+          });
+        }
+      });
 
       function returnToLogin(){
         window.location = '/matchingapp/loginPage';
