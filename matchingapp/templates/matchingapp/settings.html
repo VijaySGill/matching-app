@@ -57,7 +57,11 @@
 		  		<select id="year" class="custom-select mb-2 mr-sm-2 mb-sm-0"></select>
 				</div>
 			</div>
-  	</span>
+  		</span>
+			<div class="form-group">
+				<label for="profileImage">Profile Image</label>
+				<input class="input form-control" id="profileImage" type="file" name="profileImage"/>
+			</div>
       <br/>
 			<div class="form-group">
       	<label for="bio">Bio</label>
@@ -117,48 +121,53 @@
         return age;
       }
 
-      function loadUserInfo(username){
-  			console.log(username);
+			function loadUserInfo(username){
+		     $.ajax({
+		           async: false,
+		           type: 'POST',
+		           url: '/matchingapp/loadUser/',
+		           data: {
+		             username: username
+		           },
+		           success: function(data){
+		              if(data[0].success === "true"){
+		         				$("#id").val(data[0].id);
+		         				$("#username").val(data[0].username);
+		                $("#firstName").val(data[0].firstName);
+		                $("#lastName").val(data[0].lastName);
 
-  			$.ajax({
-           async: false,
-           type: 'POST',
-           url: '/matchingapp/loadUser/',
-           data: {
-             username: username
-           },
-           success: function(data){
-              if(data[0].success === "true"){
-  							$("#id").val(data[0].id);
-  							$("#username").val(data[0].username);
-                $("#firstName").val(data[0].firstName);
-                $("#lastName").val(data[0].lastName);
+						        var dateOfBirth = (data[0].dob).toString();
+						        var parts = dateOfBirth.split('-');
+						        var year = parseInt(parts[0], 10);
+						        var month = parseInt(parts[1], 10);
+						        var day = parseInt(parts[2], 10);
 
-							  var dateOfBirth = (data[0].dob).toString();
-							  var parts = dateOfBirth.split('-');
-							  var year = parseInt(parts[0], 10);
-							  var month = parseInt(parts[1], 10);
-							  var day = parseInt(parts[2], 10);
+						        dayList = document.getElementById('day');
+						        dayList.value = day;
 
-							  dayList = document.getElementById('day');
-							  dayList.value = day;
+						        monthList = document.getElementById('month');
+						        monthString = convertMonth(month).toLowerCase();
+						        monthList.value = monthString;
 
-							  monthList = document.getElementById('month');
-							  monthString = convertMonth(month).toLowerCase();
-							  monthList.value = monthString;
+						        yearList = document.getElementById('year');
+						        yearList.value = year;
 
-							  yearList = document.getElementById('year');
-							  yearList.value = year;
+		                age = calculateAge(data[0].dob);
+		                $("#age").val(age);
 
-                age = calculateAge(data[0].dob);
-                $("#age").val(age);
+		                $("#bio").val(data[0].bio);
 
-                $("#bio").val(data[0].bio);
-  							$('input[name="gender"][value=' + data[0].gender + ']').attr('checked', true);
-              }
-           }
-        });
-      }
+							       var hobbies = data[0].hobbies;
+							       var items = []
+		       	 				 for(var i=0; i < hobbies.length; i++){
+		        						items.push($('<li/>').text(hobbies[i]));
+		       					 }
+		       					 $('#hobbyList').append.apply($('#hobbyList'), items);
+		         				 $('input[name="gender"][value=' + data[0].gender + ']').attr('checked', true);
+		              }
+		           }
+		        });
+		      }
 
 		  function convertMonth(month){
 			  if(month === 1){ month = "January"; }

@@ -4,7 +4,7 @@
 		{% block stylesheet %}<link rel="stylesheet" type="text/css" href="{% static 'matchingapp/registerstyle.css' %}">{% endblock %}
 	{% block body %}<body onload="loadLists()"> {% endblock %}
 		{% block content %}
-			<form id="form" class="register-form container">
+			<form id="form" class="register-form container" method="post">
 					<div class="form-group">
 						<label for="username">Username</label>
 						<input class="input form-control" id="username" type="text" name="username" placeholder="Username" autofocus/>
@@ -70,7 +70,7 @@
 			</form>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
-					function createUser(){
+				function createUser(){
 					var gender = $('input[name="gender"]:checked').val();
 					var dob = processDateOfBirth($("#day").find('option:selected').text(),
 
@@ -93,6 +93,7 @@
 	          		lastName : $("#lastName").val(),
 								gender: gender,
 								dateOfBirth: dob,
+								profileImage: $('#profileImage').val(),
 								hobbies: JSON.stringify(selectedHobbies),
 	            },
 	            success: function(data){

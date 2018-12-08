@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 import json
 
+from .forms import ImageUploadForm
 from .models import UserProfile, Hobby
 
 # Global scope
@@ -43,18 +44,22 @@ def registerUser(request):
         lastName = request.POST["lastName"]
         password = request.POST["password"]
 
+        newUser = User.objects.create_user(username, email, password, first_name=firstName, last_name=lastName)
+        newUser.save()
+
         hobbies = json.loads(request.POST['hobbies'])
         if not hobbies:
             data = [{"success":"false", "message":"no hobbies selected"}]
             return JsonResponse(data, safe=False)
 
-        newUser = User.objects.create_user(username, email, password, first_name=firstName, last_name=lastName)
-        newUser.save()
-
         dob = request.POST["dateOfBirth"]
         userGender = request.POST["gender"]
 
         newProfile = UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="")
+
+        image = ImageUploadForm(request.POST, request.FILES)
+        if image.is_valid():
+            newProfile.profileImage = image.cleaned_data['profileImage']
 
         for hobby in hobbies:
             userHobby = Hobby.objects.get(name=hobby)
@@ -135,6 +140,12 @@ def loadUser(request):
     username = request.POST["username"]
     user = User.objects.get(username=username)
     userProfile = UserProfile.objects.get(user=user)
+    hobbies = userProfile.hobby.all()
+
+    userHobbies = []
+    for hobby in hobbies:
+        userHobbies.append(str(hobby))
+
     data = [{
         "success": "true",
         "id": user.id,
@@ -143,9 +154,17 @@ def loadUser(request):
         "lastName": user.last_name,
         "dob": userProfile.dateOfBirth,
         "bio": userProfile.bio,
+        "hobbies": userHobbies,
         "gender": userProfile.gender,
     }]
     return JsonResponse(data, safe=False)
+
+@csrf_exempt
+def getProfiles(request):
+    username = request.session['username']
+    user = User.objects.get(username=username)
+    profiles = UserProfile.objects.all().values().exclude(user=user)
+    return JsonResponse(list(profiles), safe=False)
 
 @csrf_exempt
 def update(request):

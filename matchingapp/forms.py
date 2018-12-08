@@ -3,14 +3,11 @@ from django.core.files.images import get_image_dimensions
 
 from matchingapp.models import UserProfile
 
-
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = UserProfile
+class ImageUploadForm(forms.Form):
+    
+    profileImage = forms.ImageField()
 
     def clean_avatar(self):
-        profileImage = self.cleaned_data['profileImage']
-
         try:
             w, h = get_image_dimensions(profileImage)
 
@@ -38,5 +35,3 @@ class UserProfileForm(forms.ModelForm):
             and do not supply a new profileImage
             """
             pass
-
-        return profileImage

@@ -8,92 +8,72 @@
 	    <br/><h1> Welcome to Vinder! </h1><br/>
 			<p>Meet hot singles 😜</p>
 			<div class="row">
-				<div class="col">
-					<div class="card" style="width: 18rem;">
-					  <img class="card-img-top" src="..." alt="Card image cap">
-					  <div class="card-body">
-					    <h5 class="card-title">Name</h5>
-					    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-					    <a href="#" class="btn btnCard">Like Profile <span><i class="fas fa-thumbs-up"></i></a>
-					  </div>
-					</div>
-				</div>
-				<div class="col">
-					<div class="card" style="width: 18rem;">
-					  <img class="card-img-top" src="..." alt="Card image cap">
-					  <div class="card-body">
-					    <h5 class="card-title">Name</h5>
-					    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-					    <a href="#" class="btn btnCard">Like Profile <span><i class="fas fa-thumbs-up"></i></a>
-					  </div>
-					</div>
-				</div>
-				<div class="col">
-					<div class="card" style="width: 18rem;">
-					  <img class="card-img-top" src="..." alt="Card image cap">
-					  <div class="card-body">
-					    <h5 class="card-title">Name</h5>
-					    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-					    <a href="#" class="btn btnCard">Like Profile <span><i class="fas fa-thumbs-up"></i></span></a>
-					  </div>
-					</div>
-				</div>
-			</div>
-		</div>
-    <button class="btn btn-col" id="logout">Logout <span><i class="fas fa-sign-out-alt"></i></span></button>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type = 'text/javascript'>
-      function authenticateUser(){
-        var loggedIn = false;
-        $.ajax({
-           async: false,
-           type: 'GET',
-           url: '/matchingapp/authenticate/',
-           dataType: 'json',
-           success: function(data){
-              loggedIn = data[0].success
-           }
-        });
-        return loggedIn;
-      }
 
-      function checkLoginStatus(){
-        var flag = authenticateUser();
-        if(flag === false){
-          returnToLogin();
-        }
-				else{
-					loadUsers();
-				}
-      }
+		  </div>
+		 </div>
+		 <button class="btn btn-col" id="logout">Logout <span><i class="fas fa-sign-out-alt"></i></span></button>
+		 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		 <script type = 'text/javascript'>
+		      function authenticateUser(){
+		        var loggedIn = false;
+		        $.ajax({
+		           async: false,
+		           type: 'GET',
+		           url: '/matchingapp/authenticate/',
+		           dataType: 'json',
+		           success: function(data){
+		              loggedIn = data[0].success
+		           }
+		        });
+		        return loggedIn;
+		      }
 
-			function loadUsers(){
-        $.ajax({
-           async: false,
-           type: 'GET',
-           url: '/matchingapp/lookupMatches/',
-           dataType: 'json',
-           success: function(data){
+		      function checkLoginStatus(){
+		        var flag = authenticateUser();
+		        if(flag === false){
+		          returnToLogin();
+		        } else {
+		    			getAllProfiles();
+		   			}
+		      }
 
-           }
-        });
-      }
+			  	function getAllProfiles(){
+			        $.ajax({
+			           async: false,
+			           type: 'GET',
+			           url: '/matchingapp/getProfiles/',
+			           dataType: 'json',
+			           success: function(data){
+			      				loadProfiles(data)
+			           }
+			        });
+			      }
 
-      $(document).on('click', '#logout', function (e){
-				e.preventDefault();
-        $.ajax({
-          type:'POST',
-          url: '/matchingapp/logout/',
-          success: function(data){
-            returnToLogin();
-          }
-        });
-      });
+			  	function loadProfiles(profiles){
+			    	for(var i = 0; i < profiles.length; i++){
+			     		var itemDiv = $("<div class='col'>").
+			       	append( $("<div class='card'>")).
+			     		append( $("<img class='card-img-top' src='...' alt='Card image cap'><div class='card-body'>")).
+			     		append( $("<h5 class='card-title'>" + profiles[i].user_id + "</h5><p class='card-text'>Some quick example text to build on the card title and make up the bulk of the card's content.</p><a href='#' class='btn btnCard'>Like Profile <span><i class='fas fa-thumbs-up'></i></a>"));
+			      	$(".row").append(itemDiv);
+			    	}
+			     }
 
-      function returnToLogin(){
-        window.location = '/matchingapp/loginPage';
-      }
-    </script>
-  </body>
-	{% endblock %}
-</html>
+					$(document).on('click', '#logout', function (e){
+					    e.preventDefault();
+			        $.ajax({
+			          type:'POST',
+			          url: '/matchingapp/logout/',
+			          success: function(data){
+			            returnToLogin();
+			          }
+			        });
+					 });
+
+		      function returnToLogin(){
+		        window.location = '/matchingapp/loginPage';
+		      }
+		    </script>
+		  </body>
+		{% endblock %}
+	</html>
