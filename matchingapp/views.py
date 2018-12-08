@@ -162,9 +162,14 @@ def loadUser(request):
 @csrf_exempt
 def getProfiles(request):
     username = request.session['username']
-    user = User.objects.get(username=username)
-    profiles = UserProfile.objects.all().values().exclude(user=user)
-    return JsonResponse(list(profiles), safe=False)
+    user = User.objects.get(username=username) # get me
+    profiles = list(UserProfile.objects.all().values().exclude(user=user)) # get all profiles but mine
+    users = list(User.objects.all().values().exclude(username=username)) # get all users but me
+    content = {
+        'profiles': profiles,
+        'users': users,
+    }
+    return JsonResponse(content, safe=False)
 
 @csrf_exempt
 def update(request):
