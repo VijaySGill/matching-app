@@ -4,7 +4,7 @@
 		{% block stylesheet %}<link rel="stylesheet" type="text/css" href="{% static 'matchingapp/registerstyle.css' %}">{% endblock %}
 	{% block body %}<body onload="loadLists()"> {% endblock %}
 		{% block content %}
-			<form id="form" class="register-form container" method="post">
+			<form id="form" class="register-form container" method="POST" enctype="multipart/form-data">
 					<div class="form-group">
 						<label for="username">Username</label>
 						<input class="input form-control" id="username" type="text" name="username" placeholder="Username" autofocus/>
@@ -63,17 +63,18 @@
 					<br/>
 					<ul id = 'list'></ul>
 					<label id = "message" style = "display: none;"></label>
-          <button class="next-button btn btn-primary" onclick='createUser()'> Create Account </button>
+          <input class="next-button btn btn-primary" type="submit" value="Create Account"/>
 					<br/>
 					<br/>
 					<a id="loginbtn" href = "{%url 'loginPage'%}">Got an account? Login</a>
 			</form>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
-				function createUser(){
+
+			$('form').on('submit',function(e){
+					e.preventDefault();
 					var gender = $('input[name="gender"]:checked').val();
 					var dob = processDateOfBirth($("#day").find('option:selected').text(),
-
 					$("#month").find('option:selected').text(), $("#year").find('option:selected').text())
 
 					var selectedHobbies = [];
@@ -120,7 +121,7 @@
 	        else {
 	          alert("Passwords do not match.");
 	        }
-	      }
+	      });
 
 				function getHobbies(){
 					$.ajax({

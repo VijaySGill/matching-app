@@ -3,13 +3,15 @@ from django.core.files.images import get_image_dimensions
 
 from matchingapp.models import UserProfile
 
-class ImageUploadForm(forms.Form):
-    
-    profileImage = forms.ImageField()
+class ImageUploadForm(forms.ModelForm):
+    class Meta:
+            model = UserProfile
+            fields = ['profileImage']
 
+"""
     def clean_avatar(self):
         try:
-            w, h = get_image_dimensions(profileImage)
+            w, h = get_image_dimensions(fields)
 
             #validate dimensions
             max_width = max_height = 100
@@ -19,19 +21,21 @@ class ImageUploadForm(forms.Form):
                      '%s x %s pixels or smaller.' % (max_width, max_height))
 
             #validate content type
-            main, sub = profileImage.content_type.split('/')
+            main, sub = fields.content_type.split('/')
             if not (main == 'image' and sub in ['jpeg', 'pjpeg', 'gif', 'png']):
                 raise forms.ValidationError(u'Please use a JPEG, '
                     'GIF or PNG image.')
 
             #validate file size
-            if len(profileImage) > (20 * 1024):
+            if len(fields) > (20 * 1024):
                 raise forms.ValidationError(
                     u'profileImage file size may not exceed 20k.')
 
         except AttributeError:
-            """
-            Handles case when we are updating the user profile
-            and do not supply a new profileImage
-            """
+
+            #Handles case when we are updating the user profile
+            #and do not supply a new profileImage
+
             pass
+
+"""

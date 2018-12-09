@@ -57,9 +57,11 @@ def registerUser(request):
 
         newProfile = UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="")
 
-        image = ImageUploadForm(request.POST, request.FILES)
+        image = UserProfile(request.POST['profileImage'], request.FILES)
         if image.is_valid():
-            newProfile.profileImage = image.cleaned_data['profileImage']
+            userprofile = image.save()
+            userprofile.user = request.user
+            userprofile.save()
 
         for hobby in hobbies:
             userHobby = Hobby.objects.get(name=hobby)
