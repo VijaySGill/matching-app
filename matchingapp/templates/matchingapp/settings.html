@@ -57,9 +57,10 @@
 		  		<select id="year" class="custom-select mb-2 mr-sm-2 mb-sm-0"></select>
 				</div>
 			</div>
-  		</span>
+  		</span><br/>
 			<div class="form-group">
 				<label for="profileImage">Profile Image</label>
+				<br/><img id="currentImage" name="currentImage"/><br/><br/>
 				<input class="input form-control" id="profileImage" type="file" name="profileImage"/>
 			</div>
       <br/>
@@ -159,6 +160,8 @@
 
 		                age = calculateAge(data[0].dob);
 		                $("#age").val(age);
+
+										$("#currentImage").attr('src', data[0].image);
 
 		                $("#bio").val(data[0].bio);
 

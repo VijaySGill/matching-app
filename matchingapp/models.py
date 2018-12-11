@@ -12,7 +12,7 @@ class UserProfile(models.Model):
     gender = models.CharField(max_length=6, blank=False)
     dateOfBirth = models.DateField(null=True, blank=False)
     bio = models.TextField(max_length=500, blank=True)
-    profileImage = models.ImageField(upload_to='profileimage/', blank=True, null=True)
+    profileImage = models.ImageField(upload_to='profileimage/%Y/%m/%d', blank=True, null=True)
     hobby = models.ManyToManyField(Hobby, blank=False)
 
     def __str__(self):

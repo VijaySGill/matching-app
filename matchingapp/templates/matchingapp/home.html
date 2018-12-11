@@ -33,36 +33,29 @@
 		        if(flag === false){
 		          returnToLogin();
 		        } else {
-		    			getAllProfiles();
+		    			getMatches();
 		   			}
 		      }
 
-					function getAllProfiles()
-					{
-					  $.ajax({
-					  	async: false,
-					   	type: 'GET',
-					   	url: '/matchingapp/getProfiles/',
-					   	dataType: 'json',
-					    success: function(content)
-							{
-								loadProfiles(content.profiles, content.users)
-					    }
-					  });
-					}
+					function loadProfiles(users, matches, profiles){
+						for(var i = 0; i < users.length; i++){
+							var itemDiv = $("<div class='col'>").
+					    append( $("<div class='card'>")).
+							append( $("<img class='card-img-top' src='...' alt='Card image cap'><div class='card-body'>")).
+							append( $("<h5 class='card-title'>" + users[i] + "</h5><p class='card-text'>" + profiles[i].bio + "<p>You have " + matches[i] + " matches with this person!</p><a href='#' class='btn btnCard'>Like Profile <span><i class='fas fa-thumbs-up'></i></a>"));
+					 		$(".row").append(itemDiv);
+						}
+			     }
 
-						function loadProfiles(profiles, users)
-						{
-							for(var j = 0; j < users.length; j++)
-							{
-								var itemDiv = $("<div class='col'>").
-					    	append( $("<div class='card'>")).
-								append( $("<img class='card-img-top' src='...' alt='Card image cap'><div class='card-body'>")).
-								append( $("<h5 class='card-title'>" + users[j].username + "</h5><p class='card-text'>" + profiles[j].bio + "</p><a href='#' class='btn btnCard'>Like Profile <span><i class='fas fa-thumbs-up'></i></a>"));
-
-					 				$(".row").append(itemDiv);
-							}
-			      }
+					 function getMatches(){
+						 $.ajax({
+						 	async: false,
+						 	type: 'POST',
+						 	url: '/matchingapp/lookupMatches/',
+						 	success: function(content){
+								loadProfiles(content.users, content.matches, content.profiles)
+						 	}});
+					 }
 
 					$(document).on('click', '#logout', function (e){
 					    e.preventDefault();

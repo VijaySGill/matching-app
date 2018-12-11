@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 import json
+import operator
 
 from .forms import ImageUploadForm
 from .models import UserProfile, Hobby
@@ -57,11 +58,18 @@ def registerUser(request):
 
         newProfile = UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="")
 
-        image = UserProfile(request.POST['profileImage'], request.FILES)
+        """
+        image = ImageUploadForm(request.POST, request.FILES, instance=newUser)
         if image.is_valid():
-            userprofile = image.save()
+            userprofile = image.save(commit=False)
             userprofile.user = request.user
             userprofile.save()
+            """
+
+        if request.FILES['profileImage']:
+            fs = FileSystemStorage()
+            filename = fs.save(myfile.name, myfile)
+            uploaded_file_url = fs.url(filename)
 
         for hobby in hobbies:
             userHobby = Hobby.objects.get(name=hobby)
@@ -156,6 +164,7 @@ def loadUser(request):
         "lastName": user.last_name,
         "dob": userProfile.dateOfBirth,
         "bio": userProfile.bio,
+        "image": json.dumps(str(userProfile.profileImage)),
         "hobbies": userHobbies,
         "gender": userProfile.gender,
     }]
@@ -209,8 +218,49 @@ def delete(request):
     post.delete()
     return HttpResponse("success")
 
+@csrf_exempt
 def lookupMatches(request):
-    allAccounts = UserProfile.hobby.all()
-    matches = []
+    count = 0;
+    matches = {};
 
-    print(allAccounts)
+    myUsername = request.session['username']
+    me = User.objects.get(username=myUsername)
+    myProfile = UserProfile.objects.get(user=me)
+    myHobbies = myProfile.hobby.all().values('name')
+
+    theirProfiles = UserProfile.objects.all().exclude(user=me)
+    for profile in theirProfiles:
+        theirHobbies = profile.hobby.all().values('name')
+        for theirHobby in theirHobbies:
+            for myHobby in myHobbies:
+                if(myHobby == theirHobby):
+                    count = count + 1
+
+        if(count == 0):
+            matches[profile.user.username] = 0
+
+        else:
+            matches[profile.user.username] = count
+        count = 0
+
+    users = []
+    userMatches = []
+    userProfiles = []
+    sortedV = sorted(matches.items(), key=operator.itemgetter(1), reverse=True)
+    for key in sortedV:
+        name, theirMatches = key
+        users.append(name)
+        userMatches.append(theirMatches)
+
+    for user in users:
+        theUser = User.objects.get(username=user)
+        theirProfile = UserProfile.objects.all().values().get(user=theUser)
+        userProfiles.append(theirProfile)
+
+    content = {
+        'users': users,
+        'profiles': userProfiles,
+        'matches': userMatches
+    }
+
+    return JsonResponse(content, safe=False)

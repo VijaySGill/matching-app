@@ -82,25 +82,28 @@
 					    selectedHobbies.push($(this).attr('name'));
 					});
 
+					var fd = new FormData("profile",$("#profileImage").get(0));
+					fd.append("username", $("#username").val());
+					fd.append("email", $("#email").val());
+					fd.append("password", $("#password").val());
+					fd.append("firstName", $("#firstName").val());
+					fd.append("lastName", $("#lastName").val());
+					fd.append("gender", gender);
+					fd.append("dateOfBirth", dob);
+					fd.append("hobbies", JSON.stringify(selectedHobbies));
+
 					if($("#password").val() == $("#confirmPassword").val()){
 	          $.ajax({
 	            type:'POST',
 	            url: '/matchingapp/registerUser/',
-	            data: {
-								username : $("#username").val(),
-								email : $("#email").val(),
-	              password : $("#password").val(),
-								firstName : $("#firstName").val(),
-	          		lastName : $("#lastName").val(),
-								gender: gender,
-								dateOfBirth: dob,
-								profileImage: $('#profileImage').val(),
-								hobbies: JSON.stringify(selectedHobbies),
-	            },
+							processData: false,
+              contentType: false,
+	            data: fd,
 	            success: function(data){
 								if(data[0].success == "true"){
 									$("#message").html("Successfully registered user. Please login.")
 									$("#message").css("display","inline")
+									returnToLogin();
 								}
 								else if(data[0].success == "false" && data[0].message == "user or email taken"){
 									$("#message").html("Username or email is taken. Please try again.")
@@ -190,6 +193,10 @@
 				getHobbies();
 				populateList();
 			}
+
+			function returnToLogin(){
+        window.location = '/matchingapp/loginPage';
+      }
   </script>
 	{% endblock %}
 	</body>
