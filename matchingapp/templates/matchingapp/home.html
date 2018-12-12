@@ -38,10 +38,14 @@
 		      }
 
 					function loadProfiles(users, matches, profiles){
+
 						for(var i = 0; i < users.length; i++){
+							try{image = "/media/"+profiles[i].profileImage}
+							catch(err){ image = "none"}
+
 							var itemDiv = $("<div class='col'>").
 					    append( $("<div class='card'>")).
-							append( $("<img class='card-img-top' src='...' alt='Card image cap'><div class='card-body'>")).
+							append( $("<img class='card-img-top' src='"+image+"' alt='Card image cap'><div class='card-body'>")).
 							append( $("<h5 class='card-title'>" + users[i] + "</h5><p class='card-text'>" + profiles[i].bio + "<p>You have " + matches[i] + " matches with this person!</p><a href='#' class='btn btnCard'>Like Profile <span><i class='fas fa-thumbs-up'></i></a>"));
 					 		$(".row").append(itemDiv);
 						}

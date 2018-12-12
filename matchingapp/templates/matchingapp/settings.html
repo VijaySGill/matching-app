@@ -236,21 +236,28 @@
       }
 
 		  function updateUser(name){
-		  	dob = processNewDateOfBirth();
+				dob = processNewDateOfBirth();
+
+				var fd = new FormData();
+				fd.append("profileImage", $("#profileImage")[0].files[0]);
+				fd.append("id", $("#id").val());
+				fd.append("username",$("#username").val());
+				fd.append("firstName",$("#firstName").val());
+				fd.append("lastName", $("#lastName").val());
+				fd.append("dateOfBirth", dob);
+				fd.append("bio", $("#bio").val());
+				fd.append("gender",$('input[name="gender"]:checked').val());
+
 		  	$.ajax({
 		       type: 'POST',
 		       url: '/matchingapp/update/',
-		       data: {
-						  id: $("#id").val(),
-						  username: $("#username").val(),
-						  firstName: $("#firstName").val(),
-						  lastName: $("#lastName").val(),
-						  dateOfBirth: dob,
-						  bio: $("#bio").val(),
-						  gender: $('input[name="gender"]:checked').val(),
-		  		},
-		    	success: function(data){
+		       data: fd,
+					 contentType: 'multipart/form-data',
+					 processData: false,
+					 contentType: false,
+		    	 success: function(data){
 		  			console.log("Done");
+						location.reload();
 		  		}
 		  	});
 		  }

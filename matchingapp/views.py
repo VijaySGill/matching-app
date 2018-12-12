@@ -1,12 +1,11 @@
 from django.shortcuts import render
+from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
-import json
-import operator
-
-from .forms import ImageUploadForm
+import os, json, operator
+from datetime import datetime
 from .models import UserProfile, Hobby
 
 # Global scope
@@ -56,20 +55,12 @@ def registerUser(request):
         dob = request.POST["dateOfBirth"]
         userGender = request.POST["gender"]
 
-        newProfile = UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="")
+        if request.FILES:
+            image = request.FILES["profileImage"]
+        else:
+            image = "image/default.png"
 
-        """
-        image = ImageUploadForm(request.POST, request.FILES, instance=newUser)
-        if image.is_valid():
-            userprofile = image.save(commit=False)
-            userprofile.user = request.user
-            userprofile.save()
-            """
-
-        if request.FILES['profileImage']:
-            fs = FileSystemStorage()
-            filename = fs.save(myfile.name, myfile)
-            uploaded_file_url = fs.url(filename)
+        newProfile = UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="", profileImage=image)
 
         for hobby in hobbies:
             userHobby = Hobby.objects.get(name=hobby)
@@ -142,7 +133,7 @@ def logout(request):
 def profile(request):
     return render(request,'matchingapp/profile.html')
 
-def settings(request):
+def settingsPage(request):
     return render(request,'matchingapp/settings.html')
 
 @csrf_exempt
@@ -156,6 +147,11 @@ def loadUser(request):
     for hobby in hobbies:
         userHobbies.append(str(hobby))
 
+    try:
+        profileImage = userProfile.profileImage.url
+    except:
+        profileImage = None
+
     data = [{
         "success": "true",
         "id": user.id,
@@ -164,7 +160,7 @@ def loadUser(request):
         "lastName": user.last_name,
         "dob": userProfile.dateOfBirth,
         "bio": userProfile.bio,
-        "image": json.dumps(str(userProfile.profileImage)),
+        "image": profileImage,
         "hobbies": userHobbies,
         "gender": userProfile.gender,
     }]
@@ -202,6 +198,11 @@ def update(request):
     profile.dateOfBirth = newDOB
     profile.bio = newBio
     profile.gender = newGender
+
+    if request.FILES:
+        profile.profileImage = request.FILES["profileImage"]
+    else:
+        profile.profileImage = "image/default.png"
 
     user.save()
     profile.save()
@@ -245,6 +246,7 @@ def lookupMatches(request):
 
     users = []
     userMatches = []
+    userImages = []
     userProfiles = []
     sortedV = sorted(matches.items(), key=operator.itemgetter(1), reverse=True)
     for key in sortedV:
