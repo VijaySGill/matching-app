@@ -6,7 +6,7 @@
 		{% block content %}
 		<div class="bodStyle container">
 	    <br/><h1> Welcome to Vinder! </h1><br/>
-			<p>Meet hot singles 😜</p>
+			<p>Make new friends 😜</p>
 			<div class="row">
 
 		  </div>
@@ -46,7 +46,7 @@
 							var itemDiv = $("<div class='col'>").
 					    append( $("<div class='card'>")).
 							append( $("<img class='card-img-top' src='"+image+"' alt='Card image cap'><div class='card-body'>")).
-							append( $("<h5 class='card-title'>" + users[i] + "</h5><p class='card-text'>" + profiles[i].bio + "<p>You have " + matches[i] + " matches with this person!</p><a href='#' class='btn btnCard'>Like Profile <span><i class='fas fa-thumbs-up'></i></a>"));
+							append( $("<h5 class='card-title'>" + users[i] + "</h5><p class='card-text'>" + profiles[i].bio + "</p>You have " + matches[i] + " matches with this person!</p><a href='#' class='btn btnCard'>Like Profile<span><i class='fas fa-thumbs-up'></i></a></span></div></div>"));
 					 		$(".row").append(itemDiv);
 						}
 			     }

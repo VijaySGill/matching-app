@@ -44,13 +44,13 @@ def registerUser(request):
         lastName = request.POST["lastName"]
         password = request.POST["password"]
 
-        newUser = User.objects.create_user(username, email, password, first_name=firstName, last_name=lastName)
-        newUser.save()
-
         hobbies = json.loads(request.POST['hobbies'])
         if not hobbies:
             data = [{"success":"false", "message":"no hobbies selected"}]
             return JsonResponse(data, safe=False)
+
+        newUser = User.objects.create_user(username, email, password, first_name=firstName, last_name=lastName)
+        newUser.save()
 
         dob = request.POST["dateOfBirth"]
         userGender = request.POST["gender"]
@@ -201,8 +201,6 @@ def update(request):
 
     if request.FILES:
         profile.profileImage = request.FILES["profileImage"]
-    else:
-        profile.profileImage = "image/default.png"
 
     user.save()
     profile.save()
