@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 import os, json, operator
-from datetime import datetime
+from datetime import datetime, date
 from .models import UserProfile, Hobby
 
 # Global scope
@@ -34,14 +34,26 @@ def authenticate(request):
         data = [{"success": False}]
         return JsonResponse(data, safe=False)
 
+def calculate_age(born):
+    today = date.today()
+    return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+
 def registerUser(request):
-    username = request.POST["username"]
+    username = (request.POST["username"]).lower()
     email = request.POST["email"]
 
     if(validateInput(username, email)):
         firstName = request.POST["firstName"]
         lastName = request.POST["lastName"]
         password = request.POST["password"]
+
+        dob = request.POST["dateOfBirth"]
+        day,month,year = dob.split('-')
+        today = date(int(day), int(month), int(year))
+        age = calculate_age(today)
+        if age<18:
+            data = [{"success":"false", "message":"must be over 16"}]
+            return JsonResponse(data, safe=False)  
 
         hobbies = json.loads(request.POST['hobbies'])
         if not hobbies:
@@ -51,7 +63,6 @@ def registerUser(request):
         newUser = User.objects.create_user(username, email, password, first_name=firstName, last_name=lastName)
         newUser.save()
 
-        dob = request.POST["dateOfBirth"]
         userGender = request.POST["gender"]
 
         if request.FILES:
@@ -76,7 +87,8 @@ def registerUser(request):
         return JsonResponse(data, safe=False)
 
 def checkUsername(username):
-    if(User.objects.filter(username=username).exists()):
+    user = username.lower()
+    if(User.objects.filter(username=user).exists()):
         return False
     else:
         return True
@@ -88,13 +100,14 @@ def checkEmail(email):
         return True
 
 def validateInput(username, email):
-    if(checkUsername(username) and checkEmail(email)):
+    user = username.lower()
+    if(checkUsername(user) and checkEmail(email)):
         return True
     else:
         return False
 
 def login(request):
-    username = request.POST["username"]
+    username = (request.POST["username"]).lower()
     password = request.POST["password"]
     try:
         user = User.objects.get(username=username)

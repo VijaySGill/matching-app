@@ -72,9 +72,40 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
 
+			function ValidateEmail(email) {
+			    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+			    return re.test(String(email));
+			}
+
+			function StringLength(inputtxt, minlength){
+				var mnlen = minlength;
+				if(inputtxt.length<mnlen || inputtxt.length> mxlen){
+					return false;
+				}
+		  }
+
 			$('form').on('submit',function(e){
 					e.preventDefault();
 					var csrf = $('input[name=csrfmiddlewaretoken]').val();
+
+					//Validate length of username and email
+					var username = $("#username").val();
+					if(!StringLength(username, 5)){
+						alert("Please input a username of minimum length 5 characters");
+						return;
+					}
+					var password = $("#password").val();
+					if(!StringLength(password, 4)){
+						alert("Please input a password of minimum length 4 characters");
+						return;
+					}
+
+					//Validates whether email is in correct format
+					var email = $("#email").val().toLowerCase();
+					if(!ValidateEmail(email)){
+						alert("You have entered an invalid email address!")
+						return;
+					}
 					var gender = $('input[name="gender"]:checked').val();
 					var dob = processDateOfBirth($("#day").find('option:selected').text(),
 					$("#month").find('option:selected').text(), $("#year").find('option:selected').text())
@@ -87,9 +118,9 @@
 					var fd = new FormData();
 					fd.append("csrfmiddlewaretoken", csrf);
 					fd.append("profileImage", $("#profileImage")[0].files[0]);
-					fd.append("username", $("#username").val());
-					fd.append("email", $("#email").val());
-					fd.append("password", $("#password").val());
+					fd.append("username", username);
+					fd.append("email", email);
+					fd.append("password", password);
 					fd.append("firstName", $("#firstName").val());
 					fd.append("lastName", $("#lastName").val());
 					fd.append("gender", gender);
@@ -116,6 +147,10 @@
 								}
 								else if(data[0].success == "false" && data[0].message == "no hobbies selected"){
 									$("#message").html("Select at least one hobby.")
+									$("#message").css("display","inline")
+								}
+								else if(data[0].success == "false" && data[0].message == "must be over 16"){
+									$("#message").html("Sorry, you must be 16 or over to signup.")
 									$("#message").css("display","inline")
 								}
 	            },

@@ -4,6 +4,7 @@
 		{% block stylesheet %} <link rel="stylesheet" type="text/css" href="{% static 'matchingapp/settings.css' %}">{% endblock %}
 {% block body %}<body onload="obtainUser()"> {% endblock %}
 {% block content %}
+{% csrf_token %}
 	<br/>
   <div class="container">
 		<h3 class="subheaders">| Profile</h3>
