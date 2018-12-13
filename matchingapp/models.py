@@ -8,6 +8,12 @@ class Hobby(models.Model):
     def __str__(self):
         return self.name
 
+class Likes(models.Model):
+    name = models.CharField(max_length=100,blank=True, null=True, unique=True)
+
+    def __str__(self):
+        return self.name
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     gender = models.CharField(max_length=6, blank=False)
@@ -15,6 +21,7 @@ class UserProfile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     profileImage = models.ImageField(upload_to="image", blank=True, null=True)
     hobby = models.ManyToManyField(Hobby, blank=False)
+    profileLike = models.ManyToManyField(Likes, blank=False)
     likes = models.FloatField(null=True, blank=False)
 
     def __str__(self):

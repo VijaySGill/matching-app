@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 import os, json, operator
 from datetime import datetime, date
-from .models import UserProfile, Hobby
+from .models import UserProfile, Hobby, Likes
 
 # Global scope
 currentAccount = ""
@@ -39,6 +39,7 @@ def calculate_age(born):
     return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
 def registerUser(request):
+    #converts all usernames to lowercase so there are not multiple users with the same username is different cases
     username = (request.POST["username"]).lower()
     email = request.POST["email"]
 
@@ -47,6 +48,7 @@ def registerUser(request):
         lastName = request.POST["lastName"]
         password = request.POST["password"]
 
+        #checks that the date entered is 18 minimum
         dob = request.POST["dateOfBirth"]
         day,month,year = dob.split('-')
         today = date(int(day), int(month), int(year))
@@ -55,6 +57,7 @@ def registerUser(request):
             data = [{"success":"false", "message":"must be over 16"}]
             return JsonResponse(data, safe=False)
 
+        #checks that at least one hobby has been selected
         hobbies = json.loads(request.POST['hobbies'])
         if not hobbies:
             data = [{"success":"false", "message":"no hobbies selected"}]
@@ -107,6 +110,7 @@ def validateInput(username, email):
         return False
 
 def login(request):
+    #lets users enter username upper or lower case
     username = (request.POST["username"]).lower()
     password = request.POST["password"]
     try:
@@ -203,6 +207,13 @@ def update(request):
     user.first_name = newFirstName
     user.last_name = newLastName
 
+    day,month,year = newDOB.split('-')
+    today = date(int(day), int(month), int(year))
+    age = calculate_age(today)
+    if age<18:
+        data = [{"success":"false"}]
+        return JsonResponse(data, safe=False)
+
     profile.dateOfBirth = newDOB
     profile.bio = newBio
     profile.gender = newGender
@@ -217,6 +228,7 @@ def update(request):
 
     return JsonResponse({"success": True}, safe=False)
 
+#deletes the user profile using the ID
 @csrf_exempt
 def delete(request):
     body = json.loads(request.body.decode('utf-8'))
@@ -272,15 +284,40 @@ def lookupMatches(request):
 
     return JsonResponse(content, safe=False)
 
+@csrf_exempt
 def userLikes(request):
     body = json.loads(request.body.decode('utf-8'))
     item = body['username']
+
+    #Creates a new user in the likes model if it doesn't exist already
+    try:
+        newUser = Likes.objects.create(name=item)
+        newUser.save()
+    except:
+        print("already exists")
+
+    newUser = Likes.objects.get(name=item)
     currentUser = User.objects.get(username=item)
     profile = UserProfile.objects.get(user=currentUser)
 
-    addLikes = profile.likes + 1
-    profile.likes = addLikes
-    print(profile.likes)
+    likers = profile.profileLike.all()
+
+    #if the user has already liked the profile and presses the button again it dislikes it
+    for user in likers:
+        if (str(user) == str(item)):
+            profile.likes = profile.likes - 1
+            profile.profileLike.remove(newUser)
+            currentUser.save()
+            profile.save()
+            return HttpResponse("success")
+
+    #if the likes has Nonetype, it initialises it with a value of 1
+    if profile.likes:
+        profile.profileLike.add(newUser)
+        profile.likes = profile.likes + 1
+    else:
+        profile.profileLike.add(newUser)
+        profile.likes = 1
 
     currentUser.save()
     profile.save()

@@ -79,7 +79,7 @@
 
 			function StringLength(inputtxt, minlength){
 				var mnlen = minlength;
-				if(inputtxt.length<mnlen || inputtxt.length> mxlen){
+				if(inputtxt.length<mnlen){
 					return false;
 				}
 		  }
@@ -90,12 +90,12 @@
 
 					//Validate length of username and email
 					var username = $("#username").val();
-					if(!StringLength(username, 5)){
+					if(StringLength(username, 5) == false){
 						alert("Please input a username of minimum length 5 characters");
 						return;
 					}
 					var password = $("#password").val();
-					if(!StringLength(password, 4)){
+					if(StringLength(password, 4) == false){
 						alert("Please input a password of minimum length 4 characters");
 						return;
 					}

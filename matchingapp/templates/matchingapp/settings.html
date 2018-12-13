@@ -261,8 +261,12 @@
 					 processData: false,
 					 contentType: false,
 		    	 success: function(data){
-		  			console.log("Done");
-						location.reload();
+						 if(data[0].success == "false"){
+							 alert("Please enter a valid age (18+)");
+						 }else{
+			  			console.log("Done");
+							location.reload();
+						}
 		  		}
 		  	});
 		  }

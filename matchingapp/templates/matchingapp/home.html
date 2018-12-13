@@ -2,9 +2,8 @@
 		{% load static %}
 		{% block title %}<title>Home</title>{% endblock %}
 		{% block stylesheet %}<link rel="stylesheet" type="text/css" href="{% static 'matchingapp/home.css' %}">{% endblock %}
-	{% block body %}<body onload="checkLoginStatus()">{% endblock %}
+	{% block body %}{% csrf_token %}<body onload="checkLoginStatus()">{% endblock %}
 		{% block content %}
-		{% csrf_token %}
 		<div class="bodStyle container">
 	    <br/><h1> Welcome to Vinder! </h1><br/>
 			<p>Make new friends 😜</p>
@@ -73,10 +72,8 @@
 	            dataType: "json",
 	            success: function(response) {
 								console.log("Success")
-							},
-							error: function(req, status, err){
-                console.log("Something went wrong", status, err)
-            },
+							}
+						});
 					});
 
 					$(document).on('click', '#logout', function (e){

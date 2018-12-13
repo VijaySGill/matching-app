@@ -17,5 +17,7 @@ urlpatterns = [
     path('profile/', views.profile, name="profile"),
     path('settings/', views.settingsPage, name="settings"),
     path('delete/', views.delete, name="delete"),
-    path('getProfiles/', views.getProfiles, name="getProfiles")
+    path('getProfiles/', views.getProfiles, name="getProfiles"),
+    path('userLikes/', views.userLikes, name="userLikes")
+
 ]
