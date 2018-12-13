@@ -53,7 +53,7 @@ def registerUser(request):
         age = calculate_age(today)
         if age<18:
             data = [{"success":"false", "message":"must be over 16"}]
-            return JsonResponse(data, safe=False)  
+            return JsonResponse(data, safe=False)
 
         hobbies = json.loads(request.POST['hobbies'])
         if not hobbies:
@@ -70,7 +70,7 @@ def registerUser(request):
         else:
             image = "image/default.png"
 
-        newProfile = UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="", profileImage=image)
+        newProfile = UserProfile.objects.create(user=newUser, gender=userGender, dateOfBirth=dob, bio="", profileImage=image, likes=0)
 
         for hobby in hobbies:
             userHobby = Hobby.objects.get(name=hobby)
@@ -271,3 +271,17 @@ def lookupMatches(request):
     }
 
     return JsonResponse(content, safe=False)
+
+def userLikes(request):
+    body = json.loads(request.body.decode('utf-8'))
+    item = body['username']
+    currentUser = User.objects.get(username=item)
+    profile = UserProfile.objects.get(user=currentUser)
+
+    addLikes = profile.likes + 1
+    profile.likes = addLikes
+    print(profile.likes)
+
+    currentUser.save()
+    profile.save()
+    return HttpResponse("success")

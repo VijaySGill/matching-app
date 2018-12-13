@@ -15,6 +15,7 @@ class UserProfile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     profileImage = models.ImageField(upload_to="image", blank=True, null=True)
     hobby = models.ManyToManyField(Hobby, blank=False)
+    likes = models.FloatField(null=True, blank=False)
 
     def __str__(self):
         return self.user.get_username()
