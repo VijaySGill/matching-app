@@ -128,11 +128,13 @@
       }
 
 			function loadUserInfo(username){
+				var csrf = $('input[name=csrfmiddlewaretoken]').val();
 		     $.ajax({
 		           async: false,
 		           type: 'POST',
 		           url: '/matchingapp/loadUser/',
 		           data: {
+								 csrfmiddlewaretoken: csrf,
 		             username: username
 		           },
 		           success: function(data){
@@ -236,9 +238,11 @@
       }
 
 		  function updateUser(name){
+				var csrf = $('input[name=csrfmiddlewaretoken]').val();
 				dob = processNewDateOfBirth();
 
 				var fd = new FormData();
+				fd.append("csrfmiddlewaretoken", csrf);
 				fd.append("profileImage", $("#profileImage")[0].files[0]);
 				fd.append("id", $("#id").val());
 				fd.append("username",$("#username").val());

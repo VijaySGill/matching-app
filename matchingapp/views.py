@@ -34,7 +34,6 @@ def authenticate(request):
         data = [{"success": False}]
         return JsonResponse(data, safe=False)
 
-@csrf_exempt
 def registerUser(request):
     username = request.POST["username"]
     email = request.POST["email"]
@@ -94,7 +93,6 @@ def validateInput(username, email):
     else:
         return False
 
-@csrf_exempt
 def login(request):
     username = request.POST["username"]
     password = request.POST["password"]
@@ -136,7 +134,6 @@ def profile(request):
 def settingsPage(request):
     return render(request,'matchingapp/settings.html')
 
-@csrf_exempt
 def loadUser(request):
     username = request.POST["username"]
     user = User.objects.get(username=username)
@@ -166,7 +163,6 @@ def loadUser(request):
     }]
     return JsonResponse(data, safe=False)
 
-@csrf_exempt
 def getProfiles(request):
     username = request.session['username']
     user = User.objects.get(username=username) # get me
@@ -178,7 +174,6 @@ def getProfiles(request):
     }
     return JsonResponse(content, safe=False)
 
-@csrf_exempt
 def update(request):
     userID = request.POST['id']
     newUsername = request.POST['username']
@@ -217,7 +212,6 @@ def delete(request):
     post.delete()
     return HttpResponse("success")
 
-@csrf_exempt
 def lookupMatches(request):
     count = 0;
     matches = {};

@@ -4,6 +4,7 @@
 		{% block stylesheet %}<link rel="stylesheet" type="text/css" href="{% static 'matchingapp/home.css' %}">{% endblock %}
 	{% block body %}<body onload="checkLoginStatus()">{% endblock %}
 		{% block content %}
+		{% csrf_token %}
 		<div class="bodStyle container">
 	    <br/><h1> Welcome to Vinder! </h1><br/>
 			<p>Make new friends 😜</p>
@@ -38,7 +39,6 @@
 		      }
 
 					function loadProfiles(users, matches, profiles){
-
 						for(var i = 0; i < users.length; i++){
 							try{image = "/media/"+profiles[i].profileImage}
 							catch(err){ image = "none"}
@@ -52,10 +52,12 @@
 			     }
 
 					 function getMatches(){
+						 var csrf = $('input[name=csrfmiddlewaretoken]').val();
 						 $.ajax({
 						 	async: false,
 						 	type: 'POST',
 						 	url: '/matchingapp/lookupMatches/',
+							data: {csrfmiddlewaretoken: csrf},
 						 	success: function(content){
 								loadProfiles(content.users, content.matches, content.profiles)
 						 	}});

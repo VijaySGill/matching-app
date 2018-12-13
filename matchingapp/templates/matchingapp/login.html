@@ -7,6 +7,7 @@
 			<!-- Form -->
 			<div class="form-box">
 				<form class="login-form container">
+					{% csrf_token %}
 					<div class="form-group">
 						<label for="username">Username</label>
 						<div class="input-group">
@@ -31,10 +32,12 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
       <script type = 'text/javascript'>
         	function loginUser(){
+						var csrf = $('input[name=csrfmiddlewaretoken]').val();
 	          $.ajax({
 	            type:'POST',
 	            url: '/matchingapp/login/',
 	            data: {
+								csrfmiddlewaretoken: csrf,
 	              username: $("#username").val(),
 	              password: $("#password").val(),
 	            },

@@ -4,7 +4,8 @@
 		{% block stylesheet %}<link rel="stylesheet" type="text/css" href="{% static 'matchingapp/registerstyle.css' %}">{% endblock %}
 	{% block body %}<body onload="loadLists()"> {% endblock %}
 		{% block content %}
-			<form id="form" class="register-form container" method="POST" enctype="multipart/form-data">{% csrf_token %}
+			<form id="form" class="register-form container" method="POST" enctype="multipart/form-data">
+				{% csrf_token %}
 					<div class="form-group">
 						<label for="username">Username</label>
 						<input class="input form-control" id="username" type="text" name="username" placeholder="Username" autofocus/>
@@ -73,6 +74,7 @@
 
 			$('form').on('submit',function(e){
 					e.preventDefault();
+					var csrf = $('input[name=csrfmiddlewaretoken]').val();
 					var gender = $('input[name="gender"]:checked').val();
 					var dob = processDateOfBirth($("#day").find('option:selected').text(),
 					$("#month").find('option:selected').text(), $("#year").find('option:selected').text())
@@ -83,6 +85,7 @@
 					});
 
 					var fd = new FormData();
+					fd.append("csrfmiddlewaretoken", csrf);
 					fd.append("profileImage", $("#profileImage")[0].files[0]);
 					fd.append("username", $("#username").val());
 					fd.append("email", $("#email").val());
@@ -112,7 +115,7 @@
 									$("#message").css("display","inline")
 								}
 								else if(data[0].success == "false" && data[0].message == "no hobbies selected"){
-									$("#message").html("Select atleast one hobby.")
+									$("#message").html("Select at least one hobby.")
 									$("#message").css("display","inline")
 								}
 	            },
