@@ -132,17 +132,10 @@
 					//The file uploaded is an image
 					if (Extension == "gif" || Extension == "png" || Extension == "bmp"
 													|| Extension == "jpeg" || Extension == "jpg") {
-							// To Display
-							if (fuData.files && fuData.files[0]) {
-									var reader = new FileReader();
-									reader.onload = function(e) {
-											$('#blah').attr('src', e.target.result);
-									}
-									reader.readAsDataURL(fuData.files[0]);
-							}
+							return true; // To Display
 					} else { //The file upload is NOT an image
 							alert("Photo only allows file types of GIF, PNG, JPG, JPEG and BMP. ");
-
+							return false;
 					}
 				}
 			}
@@ -278,6 +271,9 @@
 					alert("Please enter a valid age (18+)");
 					return;
 				}
+
+				res = ValidateFileUpload(); //Validates image
+				if (res == false) { return; }
 
 				var fd = new FormData();
 				fd.append("csrfmiddlewaretoken", csrf);

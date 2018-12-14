@@ -84,6 +84,23 @@
 				}
 		  }
 
+			function ValidateFileUpload() {
+			var fuData = document.getElementById('profileImage');
+			var FileUploadPath = fuData.value;
+
+			if(FileUploadPath != ""){
+					var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+					//The file uploaded is an image
+					if (Extension == "gif" || Extension == "png" || Extension == "bmp"
+													|| Extension == "jpeg" || Extension == "jpg") {
+							return true; // To Display
+					} else { //The file upload is NOT an image
+							alert("Photo only allows file types of GIF, PNG, JPG, JPEG and BMP.");
+							return false;
+					}
+				}
+			}
+
 			$('form').on('submit',function(e){
 					e.preventDefault();
 					var csrf = $('input[name=csrfmiddlewaretoken]').val();
@@ -99,6 +116,9 @@
 						alert("Please input a password of minimum length 4 characters");
 						return;
 					}
+
+					res = ValidateFileUpload(); //Validates image
+					if (res == false) { return; }
 
 					//Validates whether email is in correct format
 					var email = $("#email").val().toLowerCase();
