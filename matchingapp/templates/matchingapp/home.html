@@ -10,8 +10,8 @@
 			<div class="row">
 
 		  </div>
+			<button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fas fa-arrow-up"></i></button>
 		 </div>
-		 <button class="btn btn-col" id="logout">Logout <span><i class="fas fa-sign-out-alt"></i></span></button>
 		 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		 <script type = 'text/javascript'>
 		      function authenticateUser(){
@@ -76,21 +76,23 @@
 							}
 						});
 					});
-					//logs out user
-					$(document).on('click', '#logout', function (e){
-					    e.preventDefault();
-			        $.ajax({
-			          type:'POST',
-			          url: '/matchingapp/logout/',
-			          success: function(data){
-			            returnToLogin();
-			          }
-			        });
-					 });
-					 //return to login page
-		      function returnToLogin(){
-		        window.location = '/matchingapp/loginPage';
-		      }
+
+					// When the user scrolls down 20px from the top of the document, show the button
+					window.onscroll = function() {scrollFunction()};
+
+					function scrollFunction() {
+					  if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+					    document.getElementById("myBtn").style.display = "block";
+					  } else {
+					    document.getElementById("myBtn").style.display = "none";
+					  }
+					}
+
+					// When the user clicks on the button, scroll to the top of the document
+					function topFunction() {
+					  document.body.scrollTop = 0; // For Safari
+					  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+					}
 		    </script>
 		  </body>
 		{% endblock %}

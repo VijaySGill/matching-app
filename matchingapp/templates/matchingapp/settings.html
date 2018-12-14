@@ -7,36 +7,47 @@
 {% csrf_token %}
 	<br/>
   <div class="container">
-		<h3 class="subheaders">| Profile</h3>
+		<h3 class="subheaders"><i class="fas fa-user"></i> Profile</h3><br/>
     <input id="id" type="text" name="id" hidden/>
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input id="username" class="form-control" type="text" name="username" placeholder="Username"/>
-    </div>
 		<div class="row">
-			<div class="col">
+			<div class="col-sm">
+				<div class="form-group">
+					<label for="username">Username</label>
+					<input id="username" class="form-control" type="text" name="username" placeholder="Username"/>
+				</div>
+				<div class="row">
+					<div class="col-sm">
+						<div class="form-group">
+							<label for="firstName">First Name</label>
+							<input id="firstName" class="form-control" type="text" name="firstName" placeholder="First Name"/>
+						</div>
+					</div>
+					<div class="col">
+						<div class="form-group">
+							<label for="lastName">Last Name</label>
+							<input id="lastName" class="form-control" type="text" name="lastName" placeholder="Last Name"/>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+				  <label for="gender">Gender</label>
+				  <input type="radio" name="gender" value="male"/> Male
+				  <input type="radio" name="gender" value="female"/> Female
+				  <input type="radio" name="gender" value="other"/> Other
+				</div>
 		    <div class="form-group">
-		      <label for="firstName">First Name</label>
-		      <input id="firstName" class="form-control" type="text" name="firstName" placeholder="First Name"/>
-		    </div>
+		      <label for="age">Age</label>
+					<input id="age" class="form-control" type="text" name="age" placeholder="Age" readonly/>
+					<small id="emailHelp" class="form-text text-muted">Contact Admin if there's a problem with your age.</small>
+				</div>
 			</div>
 			<div class="col">
-		    <div class="form-group">
-		      <label for="lastName">Last Name</label>
-		      <input id="lastName" class="form-control" type="text" name="lastName" placeholder="Last Name"/>
-		    </div>
+				<div class="form-group">
+					<label for="profileImage">Profile Image</label>
+					<br/><img id="currentImage" name="currentImage"/><br/><br/>
+					<input class="input form-control" id="profileImage" type="file" name="profileImage" onchange="return ValidateFileUpload()"/>
+				</div>
 			</div>
-		</div>
-    <div class="form-group">
-      <label for="age">Age</label>
-			<input id="age" class="form-control" type="text" name="age" placeholder="Age" readonly/>
-			<small id="emailHelp" class="form-text text-muted">Contact Admin if there's a problem with your age.</small>
-		</div>
-		<div class="form-group">
-		  <label for="gender">Gender</label>
-		  <input type="radio" name="gender" value="male"/> Male
-		  <input type="radio" name="gender" value="female"/> Female
-		  <input type="radio" name="gender" value="other"/> Other
 		</div>
   	<span>
 	  	<label class="mr-sm-2" for="inlineFormCustomSelect">Date of Birth</label>
@@ -60,12 +71,6 @@
 			</div>
   		</span><br/>
 			<div class="form-group">
-				<label for="profileImage">Profile Image</label>
-				<br/><img id="currentImage" name="currentImage"/><br/><br/>
-				<input class="input form-control" id="profileImage" type="file" name="profileImage"/>
-			</div>
-      <br/>
-			<div class="form-group">
       	<label for="bio">Bio</label>
 				<textarea name="bio" id="bio" class="form-control" rows="8" cols="80" placeholder="Bio"></textarea>
 			</div>
@@ -78,7 +83,7 @@
 			<br/><br/>
     </div>
 		<div class="container">
-			<h3 class="subheaders">| Account</h3>
+			<h3 class="subheaders"><i class="fas fa-cogs"></i> Account</h3>
 			<br/>
 			<div id="account">
 				<div class="container">
@@ -117,6 +122,31 @@
         });
         return username;
       }
+
+			function ValidateFileUpload() {
+			var fuData = document.getElementById('profileImage');
+			var FileUploadPath = fuData.value;
+
+			if(FileUploadPath != ""){
+					var Extension = FileUploadPath.substring(FileUploadPath.lastIndexOf('.') + 1).toLowerCase();
+					//The file uploaded is an image
+					if (Extension == "gif" || Extension == "png" || Extension == "bmp"
+													|| Extension == "jpeg" || Extension == "jpg") {
+							// To Display
+							if (fuData.files && fuData.files[0]) {
+									var reader = new FileReader();
+									reader.onload = function(e) {
+											$('#blah').attr('src', e.target.result);
+									}
+									reader.readAsDataURL(fuData.files[0]);
+							}
+					} else { //The file upload is NOT an image
+							alert("Photo only allows file types of GIF, PNG, JPG, JPEG and BMP. ");
+
+					}
+				}
+			}
+
 			//calculates age of user using the birthdate
       function calculateAge(dob){
         var today = new Date();
@@ -241,13 +271,19 @@
 			//update user is similar to registration
 		  function updateUser(name){
 				var csrf = $('input[name=csrfmiddlewaretoken]').val();
+				username = $("#username").val();
 				dob = processNewDateOfBirth();
+
+				if(calculateAge(dob)< 18){
+					alert("Please enter a valid age (18+)");
+					return;
+				}
 
 				var fd = new FormData();
 				fd.append("csrfmiddlewaretoken", csrf);
 				fd.append("profileImage", $("#profileImage")[0].files[0]);
 				fd.append("id", $("#id").val());
-				fd.append("username",$("#username").val());
+				fd.append("username",username);
 				fd.append("firstName",$("#firstName").val());
 				fd.append("lastName", $("#lastName").val());
 				fd.append("dateOfBirth", dob);
@@ -262,13 +298,9 @@
 					 processData: false,
 					 contentType: false,
 		    	 success: function(data){
-						 if(data[0].success == "false"){
-							 alert("Please enter a valid age (18+)");
-						 }else{
 			  			console.log("Done");
-							location.reload();
+							loadUserInfo(username);
 						}
-		  		}
 		  	});
 		  }
 
@@ -303,9 +335,5 @@
           });
         }
       });
-
-      function returnToLogin(){
-        window.location = '/matchingapp/loginPage';
-      }
   </script>
 {% endblock %}

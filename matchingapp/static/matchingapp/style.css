@@ -19,10 +19,24 @@ body{
   text-shadow: 3px 3px 0px rgba(0,0,0,0.1), 7px 7px 0px rgba(0,0,0,0.05);
 }
 
+nav{
+  background-color: #FFFFE0 !important;
+}
+
+.navbar-nav > li > a{
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: 13px;
+  margin-right: 13px;
+  background: #FFFFE0;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
 .navbar-nav a {
     padding: 15px 0;
     text-align: center;
-  }
+}
 
 .navbar-nav > li > a:hover, .navbar-nav > li > a:focus {
   color: white !important;

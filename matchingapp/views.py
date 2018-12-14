@@ -24,7 +24,7 @@ def getHobbies(request):
     hobbies = list(Hobby.objects.all().values())
     return JsonResponse(hobbies, safe=False)
 
-@csrf_exempt
+@csrf_exempt #checks that the username passed is in the current session
 def authenticate(request):
     if 'username' in request.session:
         data = [{"success":True, "username":request.session['username']}]
@@ -79,7 +79,7 @@ def registerUser(request):
             userHobby = Hobby.objects.get(name=hobby)
             newProfile.hobby.add(userHobby)
 
-        request.session['username'] = username
+        request.session['username'] = username #stores current user in session cache
         request.session['password'] = password
 
         data = [{"success":"true"}]
@@ -90,13 +90,13 @@ def registerUser(request):
         return JsonResponse(data, safe=False)
 
 def checkUsername(username):
-    user = username.lower()
+    user = username.lower() #checks if username is in the database already
     if(User.objects.filter(username=user).exists()):
         return False
     else:
         return True
 
-def checkEmail(email):
+def checkEmail(email): #checks if email is in the database already
     if(User.objects.filter(email=email).exists()):
         return False
     else:
@@ -158,11 +158,11 @@ def loadUser(request):
     userProfile = UserProfile.objects.get(user=user)
     hobbies = userProfile.hobby.all()
 
-    userHobbies = []
+    userHobbies = [] #loops through hobbies and stores them in an array to pass back to frontend
     for hobby in hobbies:
         userHobbies.append(str(hobby))
 
-    try:
+    try: #gets the image path stored
         profileImage = userProfile.profileImage.url
     except:
         profileImage = None
@@ -192,7 +192,7 @@ def getProfiles(request):
     }
     return JsonResponse(content, safe=False)
 
-def update(request):
+def update(request): #similar to the register form
     userID = request.POST['id']
     newUsername = request.POST['username']
     newFirstName = request.POST['firstName']
@@ -203,23 +203,15 @@ def update(request):
 
     user = User.objects.get(id=userID)
     profile = UserProfile.objects.get(user=user)
-
+    #sets each field with the new information from the form
     user.username = newUsername
     user.first_name = newFirstName
     user.last_name = newLastName
-
-    day,month,year = newDOB.split('-')
-    today = date(int(day), int(month), int(year))
-    age = calculate_age(today)
-    if age<18:
-        data = [{"success":"false"}]
-        return JsonResponse(data, safe=False)
-
     profile.dateOfBirth = newDOB
     profile.bio = newBio
     profile.gender = newGender
 
-    if request.FILES:
+    if request.FILES: #if file has a new image then it overwrites the field, else theres no change
         profile.profileImage = request.FILES["profileImage"]
 
     user.save()
@@ -246,7 +238,7 @@ def lookupMatches(request):
     me = User.objects.get(username=myUsername)
     myProfile = UserProfile.objects.get(user=me)
     myHobbies = myProfile.hobby.all().values('name')
-
+    #gets every user and loops through the hobbies counting how many match the current user
     theirProfiles = UserProfile.objects.all().exclude(user=me)
     for profile in theirProfiles:
         theirHobbies = profile.hobby.all().values('name')
@@ -261,12 +253,12 @@ def lookupMatches(request):
         else:
             matches[profile.user.username] = count
         count = 0
-
+    #stores the required items for the frontend in an array to loop through and print
     users = []
     userMatches = []
     userImages = []
     userProfiles = []
-    sortedV = sorted(matches.items(), key=operator.itemgetter(1), reverse=True)
+    sortedV = sorted(matches.items(), key=operator.itemgetter(1), reverse=True) #sorts in descending order
     for key in sortedV:
         name, theirMatches = key
         users.append(name)

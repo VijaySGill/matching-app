@@ -23,7 +23,7 @@
   </head>
   {% block body %}<body> {% endblock %}
     <h1 class="header"><a href="/matchingapp/home">Vinder</a></h1><br/>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light py-0">
+    <nav class="navbar navbar-expand-lg navbar-light py-0">
       <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
@@ -35,15 +35,37 @@
           <li class="nav-item">
             <a class="nav-link" href="/matchingapp/settings/">Settings</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" id="logout">Logout</a>
+          </li>
         </ul>
       </div>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
     </nav>
+    {% block content %}{% endblock %}
     <script>
       var csrftoken = Cookies.get('csrftoken');
+      //logs out user
+      $(document).on('click', '#logout', function (e){
+          e.preventDefault();
+          $.ajax({
+            type:'POST',
+            url: '/matchingapp/logout/',
+            success: function(data){
+              returnToLogin();
+            }
+          });
+       });
+       //return to login page
+      function returnToLogin(){
+        window.location = '/matchingapp/loginPage';
+      }
+      //return to homepage
+      function returnHome(){
+        window.location = '/matchingapp/home';
+      }
     </script>
-    {% block content %}{% endblock %}
   </body>
 </html>
