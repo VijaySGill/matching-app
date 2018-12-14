@@ -1,5 +1,10 @@
 body{
     font-family: 'Roboto', sans-serif;
+    background-color: #FFFFE0 !important;
+}
+
+.second-font{
+  font-family: 'Pacifico',Helvetica, sans-serif;
 }
 
 .btn-col{

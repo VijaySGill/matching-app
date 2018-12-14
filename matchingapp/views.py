@@ -102,6 +102,7 @@ def checkEmail(email):
     else:
         return True
 
+#checks that email and username are not already in the database
 def validateInput(username, email):
     user = username.lower()
     if(checkUsername(user) and checkEmail(email)):
@@ -115,7 +116,7 @@ def login(request):
     password = request.POST["password"]
     try:
         user = User.objects.get(username=username)
-
+        #checks password matches username
         if(user.check_password(password)):
             request.session['username'] = username
             request.session['password'] = password
@@ -132,7 +133,7 @@ def login(request):
         data = [{"success":"false",  "message": "user does not exist"}]
         return JsonResponse(data, safe=False)
 
-@csrf_exempt
+@csrf_exempt #gets rid of user information held in memory
 def logout(request):
     if 'username' in request.session:
         request.session.flush()

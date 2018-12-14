@@ -5,7 +5,7 @@
 	{% block body %}{% csrf_token %}<body onload="checkLoginStatus()">{% endblock %}
 		{% block content %}
 		<div class="bodStyle container">
-	    <br/><h1> Welcome to Vinder! </h1><br/>
+	    <br/><h1> Welcome to <div class="second-font">Vinder!</div></h1><br/>
 			<p>Make new friends 😜</p>
 			<div class="row">
 
@@ -27,7 +27,7 @@
 		        });
 		        return loggedIn;
 		      }
-
+					//checks that a person has logged in, if not they are redirected to login page
 		      function checkLoginStatus(){
 		        var flag = authenticateUser();
 		        if(flag === false){
@@ -36,20 +36,21 @@
 		    			getMatches();
 		   			}
 		      }
-
+					//prints all user profiles returned, with them in descending order of matches
 					function loadProfiles(users, matches, profiles){
 						for(var i = 0; i < users.length; i++){
 							try{image = "/media/"+profiles[i].profileImage}
 							catch(err){ image = "none"}
 
 							var itemDiv = $("<div class='col'>").
-					    append( $("<div class='card'>")).
-							append( $("<img class='card-img-top' src='"+image+"' alt='Card image cap'><div class='card-body'>")).
-							append( $("<h5 class='card-title'>" + users[i] + "</h5><p class='card-text'>" + profiles[i].bio + "</p>You have " + matches[i] + " matches with this person!</p><a data-username='"+ users[i] +"' class='likeUser btn btnCard'>Like Profile<span><i class='fas fa-thumbs-up'></i></a></span></div></div>"));
+					    append($("<div class='card'><img class='card-img-top' src='"+image+"' alt='Card image cap'/><div class='card-body'>"
+								+"<h5 class='card-title'>" + users[i] + "</h5><p class='card-text'>" + profiles[i].bio +
+								"</p>You have " + matches[i] + " matches with this person!</p><a data-username='"+ users[i] +
+								"' class='likeUser btn btnCard'>Like Profile <span><i class='fas fa-thumbs-up'></i></a></span></div></div></div></div>"));
 					 		$(".row").append(itemDiv);
 						}
 			     }
-
+					 //queries database for matches
 					 function getMatches(){
 						 var csrf = $('input[name=csrfmiddlewaretoken]').val();
 						 $.ajax({
@@ -61,7 +62,7 @@
 								loadProfiles(content.users, content.matches, content.profiles)
 						 	}});
 					 }
-
+					 //when user clicks the like button it either likes or dislikes the user selected
 					$(document).on('click', ".likeUser", function(e){
 						e.preventDefault();
 						var username = $(this).data('username');
@@ -75,7 +76,7 @@
 							}
 						});
 					});
-
+					//logs out user
 					$(document).on('click', '#logout', function (e){
 					    e.preventDefault();
 			        $.ajax({
@@ -86,7 +87,7 @@
 			          }
 			        });
 					 });
-
+					 //return to login page
 		      function returnToLogin(){
 		        window.location = '/matchingapp/loginPage';
 		      }

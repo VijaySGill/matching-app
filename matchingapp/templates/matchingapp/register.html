@@ -71,12 +71,12 @@
 			</form>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
-
+			//front-end validation for the format ofthe email
 			function ValidateEmail(email) {
 			    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 			    return re.test(String(email));
 			}
-
+			//checks that strings are at least the minmum length
 			function StringLength(inputtxt, minlength){
 				var mnlen = minlength;
 				if(inputtxt.length<mnlen){
@@ -109,12 +109,12 @@
 					var gender = $('input[name="gender"]:checked').val();
 					var dob = processDateOfBirth($("#day").find('option:selected').text(),
 					$("#month").find('option:selected').text(), $("#year").find('option:selected').text())
-
+					//stores hobbies selected as an array, validated in the backend
 					var selectedHobbies = [];
 					$('#list input:checked').each(function(){
 					    selectedHobbies.push($(this).attr('name'));
 					});
-
+					//stored in FormData because we need to pass a image throguh ajax
 					var fd = new FormData();
 					fd.append("csrfmiddlewaretoken", csrf);
 					fd.append("profileImage", $("#profileImage")[0].files[0]);
@@ -126,7 +126,7 @@
 					fd.append("gender", gender);
 					fd.append("dateOfBirth", dob);
 					fd.append("hobbies", JSON.stringify(selectedHobbies));
-
+					//checks passwords match
 					if($("#password").val() == $("#confirmPassword").val()){
 	          $.ajax({
 	            url: '/matchingapp/registerUser/',
@@ -165,7 +165,7 @@
 	          alert("Passwords do not match.");
 	        }
 	      });
-
+				//loads lists of hobbies in database onto the form
 				function getHobbies(){
 					$.ajax({
 						type:'GET',
@@ -203,7 +203,7 @@
 				else if(month === "December"){ month = "12"; }
 				return `${year}-${month}-${day}`
 			}
-
+			//formats how the date should be displayed in the form
 			function populateList(){
 				var minDay = 1;
 				var maxDay = 31;

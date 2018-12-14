@@ -97,6 +97,7 @@
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
+			//checks that a user haas logged in
       function authenticateUser(){
         var loggedIn = false;
         var username = "";
@@ -116,7 +117,7 @@
         });
         return username;
       }
-
+			//calculates age of user using the birthdate
       function calculateAge(dob){
         var today = new Date();
         var birthDate = new Date(dob);
@@ -127,7 +128,7 @@
         }
         return age;
       }
-
+			//gets user information by using session data stored in the backend
 			function loadUserInfo(username){
 				var csrf = $('input[name=csrfmiddlewaretoken]').val();
 		     $.ajax({
@@ -237,7 +238,7 @@
   			var user = authenticateUser();
         loadUserInfo(user);
       }
-
+			//update user is similar to registration
 		  function updateUser(name){
 				var csrf = $('input[name=csrfmiddlewaretoken]').val();
 				dob = processNewDateOfBirth();
@@ -284,7 +285,7 @@
 
 			  return `${year}-${month}-${day}`
 		  }
-
+			//Passes user id to find in database and delete account, on success returns to login
 			$(document).on('click', '.delete', function () {
         if (confirm("Are you sure you want to delete this?")){
           var id = $("#id").val();
