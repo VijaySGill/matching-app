@@ -6,11 +6,12 @@
 {% block content %}
 {% csrf_token %}
 	<br/>
-  <div class="container">
+    <div class="container">
 		<h3 id="title" class="subheaders">| Profile</h3>
 		<br/><img id="currentImage" name="currentImage"/><br/><br/>
 		<label>Number of Likes: </label><p id="likes"></p>
 			<div class = "form-group">
+<<<<<<< HEAD
 				<!--when i get rid of this span the user data is not loaded-->
 				  	<span>
 					  	<label class="mr-sm-2" for="inlineFormCustomSelect">Date of Birth</label>
@@ -45,11 +46,36 @@
 			<ol id="hobbyList"> </ol>
 			<div class="form-group">
 			<button class="btn btn-primary"> Change Profile </button>
+=======
+				<label for="firstName">First Name:</label>
+				<p id = firstName> FirstName </p>
+				<label for="lastName">Last Name:</label>
+				<p id = "lastName"> Last Name </p>
+				<label for="dob">Date of Birth:</label>
+				<p id = dob> Date of Birth </p>
+				<label for="age">Age:</label>
+				<p id = age> Age </p>
+				<label for="bio">Bio:</label>
+				<p id = bio> Bio </p>
+				<label>Hobbies</label>
+				<ol id="hobbyList"> </ol>
+			</div>
+			<button class="btn btn-primary" onclick="location.href = '../settings/'"">Change Profile</button>
+>>>>>>> 1f40709882e67e9b8c5f5e38d4b7bf95ee245aa2
 	</div>
 
     </body>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type = 'text/javascript'>
+
+
+		function obtainUser(){
+			var user = authenticateUser();
+		loadUserInfo(user);
+		}
+
+
       function authenticateUser(){
         var loggedIn = false;
         var username = "";
@@ -81,6 +107,7 @@
         return age;
       }
 
+<<<<<<< HEAD
 			function loadUserInfo(username){
 				var csrf = $('input[name=csrfmiddlewaretoken]').val();
 		     $.ajax({
@@ -186,6 +213,52 @@
   			populateList();
   			var user = authenticateUser();
         loadUserInfo(user);
+=======
+		function loadUserInfo(username){
+			var csrf = $('input[name=csrfmiddlewaretoken]').val();
+	     $.ajax({
+	           async: false,
+	           type: 'POST',
+	           url: '/matchingapp/loadUser/',
+	           data: {
+							 csrfmiddlewaretoken: csrf,
+	             username: username
+	           },
+	           success: function(data){
+	              if(data[0].success === "true"){
+
+
+					  document.getElementById("title").innerHTML = "| " + data[0].username;
+					  document.getElementById("firstName").innerHTML = data[0].firstName;
+					  document.getElementById("lastName").innerHTML = data[0].lastName;
+					  age = calculateAge(data[0].dob);
+					  document.getElementById("age").innerHTML = age;
+					  document.getElementById("bio").innerHTML = data[0].bio;
+					  $("#currentImage").attr('src', data[0].image);
+
+					        var dateOfBirth = (data[0].dob).toString();
+					        var parts = dateOfBirth.split('-');
+					        var year = parseInt(parts[0], 10);
+					        var month = parseInt(parts[1], 10);
+					        var day = parseInt(parts[2], 10);
+
+							document.getElementById("dob").innerHTML = day + "-" + month + "-" + year;
+						       var hobbies = data[0].hobbies;
+						       var items = []
+	       	 				 for(var i=0; i < hobbies.length; i++){
+	        						items.push($('<li/>').text(hobbies[i]));
+	       					 }
+	       					 $('#hobbyList').append.apply($('#hobbyList'), items);
+	         				 $('input[name="gender"][value=' + data[0].gender + ']').attr('checked', true);
+	              }
+	           }
+	        });
+	      }
+
+
+      function returnToLogin(){
+        window.location = '/matchingapp/loginPage';
+>>>>>>> 1f40709882e67e9b8c5f5e38d4b7bf95ee245aa2
       }
   </script>
 {% endblock %}

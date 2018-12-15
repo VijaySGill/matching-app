@@ -84,6 +84,12 @@
     </div>
 		<div class="container">
 			<h3 class="subheaders"><i class="fas fa-cogs"></i> Account</h3>
+			<label for="password">Change Password</label>
+			<input id="currentPassword" class="form-control" type="password" name="currentPassword" placeholder="Current Password"/><br/>
+			<input id="newPassword" class="form-control" type="password" name="newPassword" placeholder="New Password"/><br/>
+			<p id="password-label" hidden=true></p>
+			<button class="btn btn-primary" onclick="updateUserPassword()"> Update Password </button>
+			<br/>
 			<br/>
 			<div id="account">
 				<div class="container">
@@ -299,6 +305,34 @@
 						}
 		  	});
 		  }
+
+			function updateUserPassword()
+			{
+				var csrf = $('input[name=csrfmiddlewaretoken]').val();
+				$.ajax({
+					 type: 'POST',
+					 url: '/matchingapp/updatePassword/',
+					 data: {
+						 csrfmiddlewaretoken: csrf,
+						 currentPassword: $("#currentPassword").val(),
+						 newPassword: $("#newPassword").val()
+					 },
+					 success: function(data)
+					 {
+							if(data.success == true)
+							{
+								$('#password-label').html('Password successfully changed.');
+								$('#password-label').removeAttr('hidden');
+							}
+
+							else if(data.success == false)
+							{
+								$('#password-label').html('Password is incorrect. Please try again.');
+								$('#password-label').removeAttr('hidden');
+							}
+					 }
+				});
+			}
 
 		  function processNewDateOfBirth(){
 			  yearList = document.getElementById('year');
