@@ -22,7 +22,7 @@ class UserProfile(models.Model):
     profileImage = models.ImageField(upload_to="image", blank=True, null=True)
     hobby = models.ManyToManyField(Hobby, blank=False)
     profileLike = models.ManyToManyField(Likes, blank=False) #the profiles the user has liked
-    likes = models.FloatField(null=True, blank=False) #the total number of likes
+    likes = models.FloatField(null=True, blank=False) #the total number of likes the user has
 
     def __str__(self):
         return self.user.get_username()

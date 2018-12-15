@@ -277,7 +277,7 @@ def lookupMatches(request):
 
     return JsonResponse(content, safe=False)
 
-@csrf_exempt
+@csrf_exempt 
 def userLikes(request):
     body = json.loads(request.body.decode('utf-8'))
     likedThemUsername = body['username']
