@@ -270,7 +270,7 @@ def lookupMatches(request):
     liked = []
     for likes in myLikes:
         l = likes.get('name')
-        liked.append(l)    
+        liked.append(l)
 
     for user in users:
         theUser = User.objects.get(username=user)
@@ -376,7 +376,7 @@ def userLikes(request):
             likeMeProfile.profileLike.remove(newUser)
             likedThemProfile.save()
             likeMeProfile.save()
-            return HttpResponse("success")
+            return JsonResponse({"success": "False"}, safe=False)
 
     #if the likes has Nonetype, it initialises it with a value of 1
     if likedThemProfile.likes:
@@ -388,4 +388,4 @@ def userLikes(request):
 
     likedThemProfile.save()
     likeMeProfile.save()
-    return HttpResponse("success")
+    return JsonResponse({"success": "True"}, safe=False)
