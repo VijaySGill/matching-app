@@ -159,7 +159,8 @@
 								if(data[0].success == "true"){
 									$("#message").html("Successfully registered user. Please login.")
 									$("#message").css("display","inline")
-									returnToLogin();
+									window.location.href = "/matchingapp/home"
+
 								}
 								else if(data[0].success == "false" && data[0].message == "user or email taken"){
 									$("#message").html("Username or email is taken. Please try again.")
