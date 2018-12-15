@@ -74,21 +74,16 @@
       	<label for="bio">Bio</label>
 				<textarea name="bio" id="bio" class="form-control" rows="8" cols="80" placeholder="Bio"></textarea>
 			</div>
-			<div class="container">
-				<h5><label>Hobbies</label></h5>
-				<ol id="hobbyList">
-				</ol>
-			</div>
       <button class="btn btn-primary" onclick="updateUser()"> Update Profile </button>
 			<br/><br/>
     </div>
 		<div class="container">
-			<h3 class="subheaders"><i class="fas fa-cogs"></i> Account</h3>
+			<h3 class="subheaders"><i class="fas fa-cogs"></i> Account</h3><br/>
 			<label for="password">Change Password</label>
 			<input id="currentPassword" class="form-control" type="password" name="currentPassword" placeholder="Current Password"/><br/>
 			<input id="newPassword" class="form-control" type="password" name="newPassword" placeholder="New Password"/><br/>
 			<p id="password-label" hidden=true></p>
-			<button class="btn btn-primary" onclick="updateUserPassword()"> Update Password </button>
+			<button class="btn btn-danger" onclick="updateUserPassword()"> Update Password </button>
 			<br/>
 			<br/>
 			<div id="account">
@@ -198,13 +193,7 @@
 
 		                $("#bio").val(data[0].bio);
 
-							       var hobbies = data[0].hobbies;
-							       var items = []
-		       	 				 for(var i=0; i < hobbies.length; i++){
-		        						items.push($('<li/>').text(hobbies[i]));
-		       					 }
-		       					 $('#hobbyList').append.apply($('#hobbyList'), items);
-		         				 $('input[name="gender"][value=' + data[0].gender + ']').attr('checked', true);
+		         				$('input[name="gender"][value=' + data[0].gender + ']').attr('checked', true);
 		              }
 		           }
 		        });
