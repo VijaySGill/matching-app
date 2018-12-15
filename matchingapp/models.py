@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .upload import UploadTo
 
 '''Hobby model stores the name of the different hobbies'''
 class Hobby(models.Model):
