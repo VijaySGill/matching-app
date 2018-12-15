@@ -2,18 +2,21 @@ from django.db import models
 from django.contrib.auth.models import User
 from .upload import UploadTo
 
+'''Hobby model stores the name of the different hobbies'''
 class Hobby(models.Model):
     name = models.CharField(max_length=30, blank=False, unique=True)
 
     def __str__(self):
         return self.name
 
+'''Likes model stores the name of the user being liked'''
 class Likes(models.Model):
     name = models.CharField(max_length=100,blank=True, null=True, unique=True)
 
     def __str__(self):
         return self.name
 
+'''UserProfile model for the matchingapp. We used the django contib auth model for the User model, and used a one-to-one relationship to map each profile to their user in order to store additional information such as gender, date of birth, their biography, profile image, and likes they had been given. A many-to-many relationship is also used here to map each UserProfile to their hobbies'''
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     gender = models.CharField(max_length=6, blank=False)
