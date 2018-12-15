@@ -6,20 +6,20 @@
 		{% block content %}
 		<div class="bodStyle container">
 			<br/><h1> Welcome to <div class="second-font">Vinder!</div></h1><br/>
-			<span>Search by Gender: <input type="radio" name="gender" value="male"/> Male
+			<span class="labels">Search by Gender: <input type="radio" name="gender" value="male"/> Male
 				<input type="radio" name="gender" value="female"/> Female
 				<input type="radio" name="gender" value="other"/> Other</span>
 				<br/>
 				<br/>
-			<span>Search from Ages:
+			<span><p class="labels">Search from Ages:</p>
 				<input class="input" id="age1" type="text" name="age1" size="3"/>
 				 To
 				<input class="input" id="age2" type="text" name="age2" size="3"/>
 			</span>
 			<br/>
 			<br/>
-			<button onclick="filterUsers()">Search</button>
-			<button onclick="getMatches()">Clear Search</button>
+			<button class="btn btn-primary" onclick="filterUsers()">Search</button>
+			<button class="btn btn-danger" onclick="getMatches()">Clear Search</button>
 			<div class="row">
 
 		  </div>
@@ -50,15 +50,14 @@
 		   			}
 		      }
 					//prints all user profiles returned, with them in descending order of matches
-					function loadProfiles(users, matches, profiles, likes)
-					{
+					function loadProfiles(users, matches, profiles, likes){
 						for(var i = 0; i < users.length; i++){
 							var hasLiked = false;
 							for(var j = 0; j < likes.length; j++){
 								if(likes[j] == users[i]){
 										hasLiked = true;
 								}
-							}
+							} //checks whether profile has been liked to display the correct button
 							if(hasLiked){
 								try{image = "/media/"+profiles[i].profileImage}
 								catch(err){ image = "none"}
