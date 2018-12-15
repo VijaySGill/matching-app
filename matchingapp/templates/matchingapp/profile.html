@@ -9,9 +9,9 @@
   <div class="container">
 		<h3 id="title" class="subheaders">| Profile</h3>
 		<br/><img id="currentImage" name="currentImage"/><br/><br/>
+		<label>Number of Likes: </label><p id="likes"></p>
 			<div class = "form-group">
-
-<!--when i get rid of this span the user data is not loaded-->
+				<!--when i get rid of this span the user data is not loaded-->
 				  	<span>
 					  	<label class="mr-sm-2" for="inlineFormCustomSelect">Date of Birth</label>
 							<div class="row">
@@ -33,15 +33,14 @@
 								</div>
 							</div>
 				  		</span><br/>
-
 			<label for="firstName">First Name:</label>
-			<p id = firstName> FirstName </p>
+			<p id = "firstName"> FirstName </p>
 			<label for="lastName">Last Name:</label>
 			<p id = "lastName"> Last Name </p>
 			<label for="age">Age:</label>
 			<p id = age> Age </p>
 			<label for="bio">Bio:</label>
-			<p id = bio> Bio </p>
+			<p id = "bio"> Bio </p>
 			<label>Hobbies</label>
 			<ol id="hobbyList"> </ol>
 			<div class="form-group">
@@ -94,15 +93,14 @@
 		           },
 		           success: function(data){
 		              if(data[0].success === "true"){
-
-
-						  document.getElementById("title").innerHTML = data[0].username;
-						  document.getElementById("firstName").innerHTML = data[0].firstName;
-						  document.getElementById("lastName").innerHTML = data[0].lastName;
-						  age = calculateAge(data[0].dob);
-						  document.getElementById("age").innerHTML = age;
-						  document.getElementById("bio").innerHTML = data[0].bio;
-						  $("#currentImage").attr('src', data[0].image);
+										$("#currentImage").attr('src', data[0].image);
+										document.getElementById("likes").innerHTML = data[0].likes;
+									  document.getElementById("title").innerHTML = data[0].username;
+									  document.getElementById("firstName").innerHTML = data[0].firstName;
+									  document.getElementById("lastName").innerHTML = data[0].lastName;
+									  age = calculateAge(data[0].dob);
+									  document.getElementById("age").innerHTML = age;
+									  document.getElementById("bio").innerHTML = data[0].bio;
 
 						        var dateOfBirth = (data[0].dob).toString();
 						        var parts = dateOfBirth.split('-');
@@ -119,9 +117,6 @@
 
 						        yearList = document.getElementById('year');
 						        yearList.value = year;
-
-
-
 
 							       var hobbies = data[0].hobbies;
 							       var items = []
@@ -191,75 +186,6 @@
   			populateList();
   			var user = authenticateUser();
         loadUserInfo(user);
-      }
-
-		  function updateUser(name){
-				var csrf = $('input[name=csrfmiddlewaretoken]').val();
-				dob = processNewDateOfBirth();
-
-				var fd = new FormData();
-				fd.append("csrfmiddlewaretoken", csrf);
-				fd.append("profileImage", $("#profileImage")[0].files[0]);
-				fd.append("id", $("#id").val());
-				fd.append("username",$("#username").val());
-				fd.append("firstName",$("#firstName").val());
-				fd.append("lastName", $("#lastName").val());
-				fd.append("dateOfBirth", dob);
-				fd.append("bio", $("#bio").val());
-				fd.append("gender",$('input[name="gender"]:checked').val());
-
-		  	$.ajax({
-		       type: 'POST',
-		       url: '/matchingapp/update/',
-		       data: fd,
-					 contentType: 'multipart/form-data',
-					 processData: false,
-					 contentType: false,
-		    	 success: function(data){
-						 if(data[0].success == "false"){
-							 alert("Please enter a valid age (18+)");
-						 }else{
-			  			console.log("Done");
-							location.reload();
-						}
-		  		}
-		  	});
-		  }
-
-		  function processNewDateOfBirth(){
-			  yearList = document.getElementById('year');
-			  monthList = document.getElementById('month');
-			  dayList = document.getElementById('day');
-
-			  year = yearList.value;
-			  month = monthList.value;
-			  day = dayList.value;
-
-			  month = convertMonth(month);
-
-			  return `${year}-${month}-${day}`
-		  }
-
-			$(document).on('click', '.delete', function () {
-        if (confirm("Are you sure you want to delete this?")){
-          var id = $("#id").val();
-          $.ajax({
-            type: "DELETE",
-            url: "/matchingapp/delete/",
-            data: JSON.stringify({'id': id}),
-            success: function() {
-                console.log("Success");
-								returnToLogin();
-            },
-            error: function(req, status, err){
-                console.log("Something went wrong", status, err)
-            },
-          });
-        }
-      });
-
-      function returnToLogin(){
-        window.location = '/matchingapp/loginPage';
       }
   </script>
 {% endblock %}

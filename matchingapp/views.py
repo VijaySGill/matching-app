@@ -178,6 +178,7 @@ def loadUser(request):
         "image": profileImage,
         "hobbies": userHobbies,
         "gender": userProfile.gender,
+        "likes": userProfile.likes
     }]
     return JsonResponse(data, safe=False)
 
