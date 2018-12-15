@@ -1,7 +1,258 @@
 {% extends 'matchingapp/base.html' %}
 		{% load static %}
-		{% block title %}<title>Profile</title>{% endblock %}
-		{% block stylesheet %} <link rel="stylesheet" type="text/css" href="{% static 'matchingapp/profile.css' %}">{% endblock %}
+		{% block title %}<title>Settings</title>{% endblock %}
+		{% block stylesheet %} <link rel="stylesheet" type="text/css" href="{% static 'matchingapp/settings.css' %}">{% endblock %}
 {% block body %}<body onload="obtainUser()"> {% endblock %}
 {% block content %}
+{% csrf_token %}
+	<br/>
+  <div class="container">
+		<h3 id="title" class="subheaders">| Profile</h3>
+		<br/><img id="currentImage" name="currentImage"/><br/><br/>
+			<div class = "form-group">
+
+<!--when i get rid of this span the user data is not loaded-->
+				  	<span>
+					  	<label class="mr-sm-2" for="inlineFormCustomSelect">Date of Birth</label>
+							<div class="row">
+								<div class="col">
+							  	<select id="day" class="custom-select mb-2 mr-sm-2 mb-sm-0"></select>
+								</div>
+								<div class="col">
+								  <select id="month" class="custom-select mb-2 mr-sm-2 mb-sm-0">
+								  	<option value="january">January</option><option value="february">February</option>
+								  	<option value="march">March</option><option value="april">April</option>
+								  	<option value="may">May</option><option value="june">June</option>
+								  	<option value="july">July</option><option value="august">August</option>
+								  	<option value="september">September</option><option value="october">October</option>
+								  	<option value="november">November</option><option value="december">December</option>
+								  </select>
+								</div>
+								<div class="col">
+						  		<select id="year" class="custom-select mb-2 mr-sm-2 mb-sm-0"></select>
+								</div>
+							</div>
+				  		</span><br/>
+
+			<label for="age">Age:</label>
+			<p id = age> Age </p>
+			<label for="bio">Bio:</label>
+			<p id = bio> Bio </p>
+			<label>Hobbies</label>
+			<ol id="hobbyList"> </ol>
+			<div class="form-group">
+	</div>
+
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type = 'text/javascript'>
+      function authenticateUser(){
+        var loggedIn = false;
+        var username = "";
+
+        $.ajax({
+          async: false,
+           type: 'GET',
+           url: '/matchingapp/authenticate/',
+           dataType: 'json',
+           success: function(data){
+              loggedIn = data[0].success
+              if(loggedIn === false){
+                returnToLogin();
+              }
+              username = data[0].username
+           }
+        });
+        return username;
+      }
+
+      function calculateAge(dob){
+        var today = new Date();
+        var birthDate = new Date(dob);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())){
+            age--;
+        }
+        return age;
+      }
+
+			function loadUserInfo(username){
+				var csrf = $('input[name=csrfmiddlewaretoken]').val();
+		     $.ajax({
+		           async: false,
+		           type: 'POST',
+		           url: '/matchingapp/loadUser/',
+		           data: {
+								 csrfmiddlewaretoken: csrf,
+		             username: username
+		           },
+		           success: function(data){
+		              if(data[0].success === "true"){
+
+
+						  document.getElementById("title").innerHTML = "| " + data[0].firstName + " " + data[0].lastName + "'s Profile";
+						  age = calculateAge(data[0].dob);
+						  document.getElementById("age").innerHTML = age;
+						  document.getElementById("bio").innerHTML = data[0].bio;
+						  $("#currentImage").attr('src', data[0].image);
+
+						        var dateOfBirth = (data[0].dob).toString();
+						        var parts = dateOfBirth.split('-');
+						        var year = parseInt(parts[0], 10);
+						        var month = parseInt(parts[1], 10);
+						        var day = parseInt(parts[2], 10);
+
+						        dayList = document.getElementById('day');
+						        dayList.value = day;
+
+						        monthList = document.getElementById('month');
+						        monthString = convertMonth(month).toLowerCase();
+						        monthList.value = monthString;
+
+						        yearList = document.getElementById('year');
+						        yearList.value = year;
+
+
+
+
+							       var hobbies = data[0].hobbies;
+							       var items = []
+		       	 				 for(var i=0; i < hobbies.length; i++){
+		        						items.push($('<li/>').text(hobbies[i]));
+		       					 }
+		       					 $('#hobbyList').append.apply($('#hobbyList'), items);
+		         				 $('input[name="gender"][value=' + data[0].gender + ']').attr('checked', true);
+		              }
+		           }
+		        });
+		      }
+
+		  function convertMonth(month){
+			  if(month === 1){ month = "January"; }
+			  else if(month === 2){ month = "February"; }
+			  else if(month === 3){ month = "March"; }
+			  else if(month === 4){ month = "April"; }
+			  else if(month === 5){ month = "May"; }
+			  else if(month === 6){ month = "June"; }
+			  else if(month === 7){ month = "July"; }
+			  else if(month === 8){ month = "August"; }
+			  else if(month === 9){ month = "September"; }
+			  else if(month === 10){ month = "October"; }
+			  else if(month === 11){ month = "November"; }
+			  else if(month === 12){ month = "December"; }
+			  else if(month === "january"){ month = 01; }
+			  else if(month === "february"){ month = 02; }
+			  else if(month === "march"){ month = 03; }
+			  else if(month === "april"){ month = 04; }
+			  else if(month === "may"){ month = 05; }
+			  else if(month === "june"){ month = 06; }
+			  else if(month === "july"){ month = 07; }
+			  else if(month === "august"){ month = 08; }
+			  else if(month === "september"){ month = 09; }
+			  else if(month === "october"){ month = 10; }
+			  else if(month === "november"){ month = 11; }
+			  else if(month === "december"){ month = 12; }
+			  return month;
+		  }
+
+		  function populateList(){
+			  var minDay = 1;
+			  var maxDay = 31;
+			  dayList = document.getElementById('day');
+
+			  for (var i = minDay; i <= maxDay; i++){
+				  var option = document.createElement('option');
+				  option.value = i;
+				  option.innerHTML = i;
+				  dayList.appendChild(option);
+			  }
+			  var minYear = 1900;
+			  var maxYear = new Date().getFullYear();
+			  yearList = document.getElementById('year');
+
+			  for (i = minYear; i <= maxYear; i++){
+				  var option = document.createElement('option');
+				  option.value = i;
+				  option.innerHTML = i;
+				  yearList.appendChild(option);
+			  }
+			  yearList.value = maxYear;
+		  }
+
+      function obtainUser(){
+  			populateList();
+  			var user = authenticateUser();
+        loadUserInfo(user);
+      }
+
+		  function updateUser(name){
+				var csrf = $('input[name=csrfmiddlewaretoken]').val();
+				dob = processNewDateOfBirth();
+
+				var fd = new FormData();
+				fd.append("csrfmiddlewaretoken", csrf);
+				fd.append("profileImage", $("#profileImage")[0].files[0]);
+				fd.append("id", $("#id").val());
+				fd.append("username",$("#username").val());
+				fd.append("firstName",$("#firstName").val());
+				fd.append("lastName", $("#lastName").val());
+				fd.append("dateOfBirth", dob);
+				fd.append("bio", $("#bio").val());
+				fd.append("gender",$('input[name="gender"]:checked').val());
+
+		  	$.ajax({
+		       type: 'POST',
+		       url: '/matchingapp/update/',
+		       data: fd,
+					 contentType: 'multipart/form-data',
+					 processData: false,
+					 contentType: false,
+		    	 success: function(data){
+						 if(data[0].success == "false"){
+							 alert("Please enter a valid age (18+)");
+						 }else{
+			  			console.log("Done");
+							location.reload();
+						}
+		  		}
+		  	});
+		  }
+
+		  function processNewDateOfBirth(){
+			  yearList = document.getElementById('year');
+			  monthList = document.getElementById('month');
+			  dayList = document.getElementById('day');
+
+			  year = yearList.value;
+			  month = monthList.value;
+			  day = dayList.value;
+
+			  month = convertMonth(month);
+
+			  return `${year}-${month}-${day}`
+		  }
+
+			$(document).on('click', '.delete', function () {
+        if (confirm("Are you sure you want to delete this?")){
+          var id = $("#id").val();
+          $.ajax({
+            type: "DELETE",
+            url: "/matchingapp/delete/",
+            data: JSON.stringify({'id': id}),
+            success: function() {
+                console.log("Success");
+								returnToLogin();
+            },
+            error: function(req, status, err){
+                console.log("Something went wrong", status, err)
+            },
+          });
+        }
+      });
+
+      function returnToLogin(){
+        window.location = '/matchingapp/loginPage';
+      }
+  </script>
 {% endblock %}
