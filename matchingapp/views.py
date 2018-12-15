@@ -3,6 +3,7 @@ from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from django.forms.models import model_to_dict
 import os, json, operator
 from datetime import datetime, date
@@ -396,3 +397,20 @@ def userLikes(request):
     likedThemProfile.save()
     likeMeProfile.save()
     return JsonResponse({"success": "True"}, safe=False)
+
+def updatePassword(request):
+    myUsername = request.session['username']
+    currentPassword = request.POST['currentPassword']
+    newPassword = request.POST['newPassword']
+
+    user = User.objects.get(username=myUsername)
+    if(user.check_password(currentPassword)):
+        user.password = make_password(newPassword)
+        user.save()
+        print("-------DONE-------------")
+        data = {"success":True}
+        return JsonResponse(data, safe=False)
+    else:
+        print("-------No match!-------------")
+        data = {"success":False}
+        return JsonResponse(data, safe=False)

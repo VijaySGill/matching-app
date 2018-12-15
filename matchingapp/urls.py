@@ -14,6 +14,7 @@ urlpatterns = [
     path('lookupMatches/', views.lookupMatches, name='lookupMatches'),
     path('filterMatches/', views.filterMatches, name='filterMatches'),
     path('update/', views.update, name='update'),
+    path('updatePassword/', views.updatePassword, name='updatePassword'),
     path('loadUser/', views.loadUser, name='loadUser'),
     path('profile/', views.profile, name="profile"),
     path('settings/', views.settingsPage, name="settings"),
