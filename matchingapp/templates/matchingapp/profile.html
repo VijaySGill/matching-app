@@ -34,6 +34,10 @@
 							</div>
 				  		</span><br/>
 
+			<label for="firstName">First Name:</label>
+			<p id = firstName> FirstName </p>
+			<label for="lastName">Last Name:</label>
+			<p id = "lastName"> Last Name </p>
 			<label for="age">Age:</label>
 			<p id = age> Age </p>
 			<label for="bio">Bio:</label>
@@ -41,6 +45,7 @@
 			<label>Hobbies</label>
 			<ol id="hobbyList"> </ol>
 			<div class="form-group">
+			<button class="btn btn-primary"> Change Profile </button>
 	</div>
 
     </body>
@@ -91,7 +96,9 @@
 		              if(data[0].success === "true"){
 
 
-						  document.getElementById("title").innerHTML = "| " + data[0].firstName + " " + data[0].lastName + "'s Profile";
+						  document.getElementById("title").innerHTML = data[0].username;
+						  document.getElementById("firstName").innerHTML = data[0].firstName;
+						  document.getElementById("lastName").innerHTML = data[0].lastName;
 						  age = calculateAge(data[0].dob);
 						  document.getElementById("age").innerHTML = age;
 						  document.getElementById("bio").innerHTML = data[0].bio;
