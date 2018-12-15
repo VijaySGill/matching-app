@@ -223,8 +223,7 @@ def update(request): #similar to the register form
 
     return JsonResponse({"success": True}, safe=False)
 
-#deletes the user profile using the ID
-@csrf_exempt
+@csrf_exempt #deletes the user profile using the ID
 def delete(request):
     body = json.loads(request.body.decode('utf-8'))
     item = body['id']
