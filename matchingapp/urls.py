@@ -12,6 +12,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('getHobbies/', views.getHobbies, name='getHobbies'),
     path('lookupMatches/', views.lookupMatches, name='lookupMatches'),
+    path('filterMatches/', views.filterMatches, name='filterMatches'),
     path('update/', views.update, name='update'),
     path('loadUser/', views.loadUser, name='loadUser'),
     path('profile/', views.profile, name="profile"),
