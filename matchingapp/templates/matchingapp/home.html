@@ -66,8 +66,8 @@
 								var itemDiv = $("<div class='col'>").
 						    append($("<div class='card'><img class='card-img-top' src='"+ image + "' alt='Card image cap'/><div class='card-body'>"
 									+"<h5 class='card-title'>" + users[i] + "</h5><p class='card-text'><i>" + profiles[i].bio +
-									"</i></p>You have " + matches[i] + " matches with this person!</p><a data-username='"+ users[i] +
-									"' class='likeUser btn btnCard'>Dislike Profile <span><i class='fas fa-thumbs-up'></i></a></span></div></div></div></div>"));
+									"</i></p>You have " + matches[i] + " matches with this person!</p><a id='" + users[i] + "' data-username='"+ users[i] +
+									"' class='likeUser btn btnCard'>Dislike Profile <span><i class='fas fa-thumbs-down'></i></a></span></div></div></div></div>"));
 						 		$(".row").append(itemDiv);
 							} else {
 								try{image = "/media/"+profiles[i].profileImage}
@@ -76,7 +76,7 @@
 								var itemDiv = $("<div class='col'>").
 						    append($("<div class='card'><img class='card-img-top' src='"+ image + "' alt='Card image cap'/><div class='card-body'>"
 									+"<h5 class='card-title'>" + users[i] + "</h5><p class='card-text'><i>" + profiles[i].bio +
-									"</i></p>You have " + matches[i] + " matches with this person!</p><a data-username='"+ users[i] +
+									"</i></p>You have " + matches[i] + " matches with this person!</p><a id='" + users[i] + "' data-username='"+ users[i] +
 									"' class='likeUser btn btnCard'>Like Profile <span><i class='fas fa-thumbs-up'></i></a></span></div></div></div></div>"));
 						 		$(".row").append(itemDiv);
 							}
@@ -84,8 +84,7 @@
 					}
 
 					 //queries database for matches
-					 function getMatches()
-					 {
+					 function getMatches(){
 							$('.row').empty();
 							var csrf = $('input[name=csrfmiddlewaretoken]').val();
 							$.ajax({
@@ -98,38 +97,35 @@
 							 }});
 					 }
 
-					 function filterUsers()
- {
-	 var csrf = $('input[name=csrfmiddlewaretoken]').val();
+					 function filterUsers(){
+						 var csrf = $('input[name=csrfmiddlewaretoken]').val();
 
-	 var selectedGender = $('input[name="gender"]:checked').val();
-	 var age1 = $('#age1').val();
-	 var age2 = $('#age2').val();
+						 var selectedGender = $('input[name="gender"]:checked').val();
+						 var age1 = $('#age1').val();
+						 var age2 = $('#age2').val();
 
-	 if(selectedGender && age1 && age2 != '')
-	 {
-		 $.ajax({
-			async: false,
-			type: 'POST',
-			url: '/matchingapp/filterMatches/',
-			data: {
-				csrfmiddlewaretoken: csrf,
-				gender: selectedGender,
-				age1: age1,
-				age2: age2,
-			},
-			success: function(content)
-			{
-				wipeUsers();
-				loadProfiles(content.users, content.matches, content.profiles, content.likes)
-			}});
-	 }
- }
+						 if(selectedGender && age1 && age2 != ''){
+							 $.ajax({
+								async: false,
+								type: 'POST',
+								url: '/matchingapp/filterMatches/',
+								data: {
+									csrfmiddlewaretoken: csrf,
+									gender: selectedGender,
+									age1: age1,
+									age2: age2,
+								},
+								success: function(content){
+									wipeUsers();
+									loadProfiles(content.users, content.matches, content.profiles, content.likes)
+								}});
+						 }
+					 }
 
- function wipeUsers()
- {
-	 $('.row').empty();
- }
+					 function wipeUsers(){
+						 $('.row').empty();
+					 }
+
 					 //when user clicks the like button it either likes or dislikes the user selected
 					$(document).on('click', ".likeUser", function(e){
 						e.preventDefault();
@@ -139,8 +135,13 @@
 	            url: "/matchingapp/userLikes/",
 	            data: JSON.stringify({'username': username}),
 	            dataType: "json",
-	            success: function(response) {
-								console.log("Success")
+	            success: function(data) {
+								if(data.success == "True"){
+									document.getElementById(username).innerHTML = "Dislike Profile <span><i class='fas fa-thumbs-down'></i>";
+								}
+								else if(data.success == "False"){
+									document.getElementById(username).innerHTML = "Like Profile <span><i class='fas fa-thumbs-up'></i>";
+								}
 							}
 						});
 					});
@@ -157,7 +158,7 @@
 					}
 
 					// When the user clicks on the button, scroll to the top of the document
-					function topFunction() {
+					function topFunction(){
 					  document.body.scrollTop = 0; // For Safari
 					  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 					}
