@@ -238,6 +238,7 @@ def lookupMatches(request):
     me = User.objects.get(username=myUsername)
     myProfile = UserProfile.objects.get(user=me)
     myHobbies = myProfile.hobby.all().values('name')
+    myLikes = myProfile.profileLike.all().values('name')
 
     theirProfiles = UserProfile.objects.all().exclude(user=me)
     for profile in theirProfiles:
@@ -255,7 +256,6 @@ def lookupMatches(request):
     theirProfiless = UserProfile.objects.all()
     for profile in theirProfiless:
         likes = profile.profileLike.all()
-        print(likes)
 
     users = []
     userMatches = []
@@ -267,6 +267,11 @@ def lookupMatches(request):
         users.append(name)
         userMatches.append(theirMatches)
 
+    liked = []
+    for likes in myLikes:
+        l = likes.get('name')
+        liked.append(l)    
+
     for user in users:
         theUser = User.objects.get(username=user)
         theirProfile = UserProfile.objects.all().values().get(user=theUser)
@@ -275,7 +280,8 @@ def lookupMatches(request):
     content = {
         'users': users,
         'profiles': userProfiles,
-        'matches': userMatches
+        'matches': userMatches,
+        'likes': liked
     }
 
     return JsonResponse(content, safe=False)
