@@ -5,8 +5,21 @@
 	{% block body %}{% csrf_token %}<body onload="checkLoginStatus()">{% endblock %}
 		{% block content %}
 		<div class="bodStyle container">
-	    <br/><h1> Welcome to <div class="second-font">Vinder!</div></h1><br/>
-			<p>Make new friends 😜</p>
+			<br/><h1> Welcome to <div class="second-font">Vinder!</div></h1><br/>
+			<span>Search by Gender: <input type="radio" name="gender" value="male"/> Male
+				<input type="radio" name="gender" value="female"/> Female
+				<input type="radio" name="gender" value="other"/> Other</span>
+				<br/>
+				<br/>
+			<span>Search from Ages:
+				<input class="input" id="age1" type="text" name="age1" size="3"/>
+				 To
+				<input class="input" id="age2" type="text" name="age2" size="3"/>
+			</span>
+			<br/>
+			<br/>
+			<button onclick="filterUsers()">Search</button>
+			<button onclick="getMatches()">Clear Search</button>
 			<div class="row">
 
 		  </div>
@@ -37,31 +50,69 @@
 		   			}
 		      }
 					//prints all user profiles returned, with them in descending order of matches
-					function loadProfiles(users, matches, profiles){
-						for(var i = 0; i < users.length; i++){
-							try{image = "/media/"+profiles[i].profileImage}
-							catch(err){ image = "none"}
+					function loadProfiles(users, matches, profiles)
+					{
+											for(var i = 0; i < users.length; i++)
+											{
+												try{image = "/media/"+profiles[i].profileImage}
+												catch(err){ image = "none"}
 
-							var itemDiv = $("<div class='col'>").
-					    append($("<div class='card'><img class='card-img-top' src='"+image+"' alt='Card image cap'/><div class='card-body'>"
-								+"<h5 class='card-title'>" + users[i] + "</h5><p class='card-text'>" + profiles[i].bio +
-								"</p>You have " + matches[i] + " matches with this person!</p><a data-username='"+ users[i] +
-								"' class='likeUser btn btnCard'>Like Profile <span><i class='fas fa-thumbs-up'></i></a></span></div></div></div></div>"));
-					 		$(".row").append(itemDiv);
-						}
-			     }
+												var itemDiv = $("<div class='col'>").
+										    append($("<div class='card'><img class='card-img-top' src='"+ image + "' alt='Card image cap'/><div class='card-body'>"
+													+"<h5 class='card-title'>" + users[i] + "</h5><p class='card-text'><i>" + profiles[i].bio +
+													"</i></p>You have " + matches[i] + " matches with this person!</p><a data-username='"+ users[i] +
+													"' class='likeUser btn btnCard'>Like Profile <span><i class='fas fa-thumbs-up'></i></a></span></div></div></div></div>"));
+										 		$(".row").append(itemDiv);
+											}
+					}
+
 					 //queries database for matches
-					 function getMatches(){
-						 var csrf = $('input[name=csrfmiddlewaretoken]').val();
-						 $.ajax({
-						 	async: false,
-						 	type: 'POST',
-						 	url: '/matchingapp/lookupMatches/',
-							data: {csrfmiddlewaretoken: csrf},
-						 	success: function(content){
-								loadProfiles(content.users, content.matches, content.profiles)
-						 	}});
+					 function getMatches()
+					 {
+							$('.row').empty();
+							var csrf = $('input[name=csrfmiddlewaretoken]').val();
+							$.ajax({
+							 async: false,
+							 type: 'POST',
+							 url: '/matchingapp/lookupMatches/',
+							 data: {csrfmiddlewaretoken: csrf},
+							 success: function(content){
+								 loadProfiles(content.users, content.matches, content.profiles)
+							 }});
 					 }
+
+					 function filterUsers()
+ {
+	 var csrf = $('input[name=csrfmiddlewaretoken]').val();
+
+	 var selectedGender = $('input[name="gender"]:checked').val();
+	 var age1 = $('#age1').val();
+	 var age2 = $('#age2').val();
+
+	 if(selectedGender && age1 && age2 != '')
+	 {
+		 $.ajax({
+			async: false,
+			type: 'POST',
+			url: '/matchingapp/filterMatches/',
+			data: {
+				csrfmiddlewaretoken: csrf,
+				gender: selectedGender,
+				age1: age1,
+				age2: age2,
+			},
+			success: function(content)
+			{
+				wipeUsers();
+				loadProfiles(content.users, content.matches, content.profiles)
+			}});
+	 }
+ }
+
+ function wipeUsers()
+ {
+	 $('.row').empty();
+ }
 					 //when user clicks the like button it either likes or dislikes the user selected
 					$(document).on('click', ".likeUser", function(e){
 						e.preventDefault();

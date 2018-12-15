@@ -238,7 +238,7 @@ def lookupMatches(request):
     me = User.objects.get(username=myUsername)
     myProfile = UserProfile.objects.get(user=me)
     myHobbies = myProfile.hobby.all().values('name')
-    #gets every user and loops through the hobbies counting how many match the current user
+
     theirProfiles = UserProfile.objects.all().exclude(user=me)
     for profile in theirProfiles:
         theirHobbies = profile.hobby.all().values('name')
@@ -246,19 +246,22 @@ def lookupMatches(request):
             for myHobby in myHobbies:
                 if(myHobby == theirHobby):
                     count = count + 1
-
         if(count == 0):
             matches[profile.user.username] = 0
-
         else:
             matches[profile.user.username] = count
         count = 0
-    #stores the required items for the frontend in an array to loop through and print
+
+    theirProfiless = UserProfile.objects.all()
+    for profile in theirProfiless:
+        likes = profile.profileLike.all()
+        print(likes)
+
     users = []
     userMatches = []
     userImages = []
     userProfiles = []
-    sortedV = sorted(matches.items(), key=operator.itemgetter(1), reverse=True) #sorts in descending order
+    sortedV = sorted(matches.items(), key=operator.itemgetter(1), reverse=True)
     for key in sortedV:
         name, theirMatches = key
         users.append(name)
@@ -277,7 +280,66 @@ def lookupMatches(request):
 
     return JsonResponse(content, safe=False)
 
-@csrf_exempt 
+def filterMatches(request):
+    count = 0;
+    matches = {};
+
+    myUsername = request.session['username']
+    gender = request.POST['gender']
+    age1 = request.POST['age1']
+    age2 = request.POST['age2']
+
+    me = User.objects.get(username=myUsername)
+    myProfile = UserProfile.objects.get(user=me)
+    myHobbies = myProfile.hobby.all().values('name')
+
+    theirProfiles = UserProfile.objects.filter(gender=gender).exclude(user=me)
+
+    for profile in theirProfiles:
+        theirAge = calculateAge(profile.dateOfBirth)
+        if not(theirAge >= int(age1) and theirAge <= int(age2)):
+            theirProfiles = theirProfiles.exclude(id=profile.id)
+
+    for profile in theirProfiles:
+        theirHobbies = profile.hobby.all().values('name')
+        for theirHobby in theirHobbies:
+            for myHobby in myHobbies:
+                if(myHobby == theirHobby):
+                    count = count + 1
+        if(count == 0):
+            matches[profile.user.username] = 0
+        else:
+            matches[profile.user.username] = count
+        count = 0
+
+    users = []
+    userMatches = []
+    userImages = []
+    userProfiles = []
+    sortedV = sorted(matches.items(), key=operator.itemgetter(1), reverse=True)
+    for key in sortedV:
+        name, theirMatches = key
+        users.append(name)
+        userMatches.append(theirMatches)
+
+    for user in users:
+        theUser = User.objects.get(username=user)
+        theirProfile = UserProfile.objects.all().values().get(user=theUser)
+        userProfiles.append(theirProfile)
+
+    content = {
+        'users': users,
+        'profiles': userProfiles,
+        'matches': userMatches
+    }
+
+    return JsonResponse(content, safe=False)
+
+def calculateAge(DOB):
+    today = date.today()
+    return today.year - DOB.year - ((today.month, today.day) < (DOB.month, DOB.day))
+
+@csrf_exempt
 def userLikes(request):
     body = json.loads(request.body.decode('utf-8'))
     likedThemUsername = body['username']
