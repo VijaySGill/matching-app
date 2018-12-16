@@ -1,1 +1,1 @@
-web: gunicorn matching-app.wsgi
+web: gunicorn matchingapp.wsgi
