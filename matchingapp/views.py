@@ -9,9 +9,10 @@ import os, json, operator
 from datetime import datetime, date
 from .models import UserProfile, Hobby, Likes
 
-# Global scope
+#global scope
 currentAccount = ""
 
+'''Returns and renders the page that is requested'''
 def index(request):
     return render(request,'matchingapp/home.html')
 
@@ -21,11 +22,20 @@ def loginPage(request):
 def register(request):
     return render(request,'matchingapp/register.html')
 
+def profile(request):
+    return render(request,'matchingapp/profile.html')
+
+def settingsPage(request):
+    return render(request,'matchingapp/settings.html')
+
+
+'''Makes a list of all the hobbies in a readable format'''
 def getHobbies(request):
     hobbies = list(Hobby.objects.all().values())
     return JsonResponse(hobbies, safe=False)
 
-@csrf_exempt #checks that the username passed is in the current session
+'''Checks that the username passed is in the current session'''
+@csrf_exempt
 def authenticate(request):
     if 'username' in request.session:
         data = [{"success":True, "username":request.session['username']}]
@@ -35,12 +45,15 @@ def authenticate(request):
         data = [{"success": False}]
         return JsonResponse(data, safe=False)
 
-def calculate_age(born):
+'''Calculates the age of the user'''
+def calculateAge(DOB):
     today = date.today()
-    return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
+    return today.year - DOB.year - ((today.month, today.day) < (DOB.month, DOB.day))
 
+'''Registers a new user and does validation checks on the data inputted'''
 def registerUser(request):
-    #converts all usernames to lowercase so there are not multiple users with the same username is different cases
+
+    #converts all usernames to lowercase so there are not multiple users with the same username in different cases
     username = (request.POST["username"]).lower()
     email = request.POST["email"]
 
@@ -49,13 +62,13 @@ def registerUser(request):
         lastName = request.POST["lastName"]
         password = request.POST["password"]
 
-        #checks that the date entered is 18 minimum
+        #checks that the user is at least 18 years old
         dob = request.POST["dateOfBirth"]
         day,month,year = dob.split('-')
-        today = date(int(day), int(month), int(year))
-        age = calculate_age(today)
+        DOB = date(int(day), int(month), int(year))
+        age = calculateAge(DOB)
         if age<18:
-            data = [{"success":"false", "message":"must be over 16"}]
+            data = [{"success":"false", "message":"must be over 18"}]
             return JsonResponse(data, safe=False)
 
         #checks that at least one hobby has been selected
@@ -69,6 +82,7 @@ def registerUser(request):
 
         userGender = request.POST["gender"]
 
+        #uses a default image if no file is uploaded by the user
         if request.FILES:
             image = request.FILES["profileImage"]
         else:
@@ -80,7 +94,8 @@ def registerUser(request):
             userHobby = Hobby.objects.get(name=hobby)
             newProfile.hobby.add(userHobby)
 
-        request.session['username'] = username #stores current user in session cache
+        #stores current user in session cache
+        request.session['username'] = username
         request.session['password'] = password
 
         data = [{"success":"true"}]
@@ -90,20 +105,21 @@ def registerUser(request):
         data = [{"success":"false", "message":"user or email taken"}]
         return JsonResponse(data, safe=False)
 
+'''Checks if the username is in the database already'''
 def checkUsername(username):
-    user = username.lower() #checks if username is in the database already
+    user = username.lower()
     if(User.objects.filter(username=user).exists()):
         return False
     else:
         return True
 
-def checkEmail(email): #checks if email is in the database already
+'''Checks if the email is in the database already'''
     if(User.objects.filter(email=email).exists()):
         return False
     else:
         return True
 
-#checks that email and username are not already in the database
+'''Checks that the email and username are not already in the database'''
 def validateInput(username, email):
     user = username.lower()
     if(checkUsername(user) and checkEmail(email)):
@@ -111,13 +127,14 @@ def validateInput(username, email):
     else:
         return False
 
+'''Validates the login details of the user'''
 def login(request):
-    #lets users enter username upper or lower case
+    #lets users enter their username in upper or lower case
     username = (request.POST["username"]).lower()
     password = request.POST["password"]
     try:
         user = User.objects.get(username=username)
-        #checks password matches username
+        #checks that the password matches username
         if(user.check_password(password)):
             request.session['username'] = username
             request.session['password'] = password
@@ -134,7 +151,8 @@ def login(request):
         data = [{"success":"false",  "message": "user does not exist"}]
         return JsonResponse(data, safe=False)
 
-@csrf_exempt #gets rid of user information held in memory
+'''Logs the user out by getting rid of user information held in memory'''
+@csrf_exempt
 def logout(request):
     if 'username' in request.session:
         request.session.flush()
@@ -147,12 +165,7 @@ def logout(request):
         data = [{"success":"false"}]
         return JsonResponse(data, safe=False)
 
-def profile(request):
-    return render(request,'matchingapp/profile.html')
-
-def settingsPage(request):
-    return render(request,'matchingapp/settings.html')
-
+'''Loads information about a specific user'''
 def loadUser(request):
     username = request.POST["username"]
     user = User.objects.get(username=username)
@@ -183,18 +196,20 @@ def loadUser(request):
     }]
     return JsonResponse(data, safe=False)
 
+'''Gets all the profiles of other users (excluding the user who is currently logged in)'''
 def getProfiles(request):
     username = request.session['username']
-    user = User.objects.get(username=username) # get me
-    profiles = list(UserProfile.objects.all().values().exclude(user=user)) # get all profiles but mine
-    users = list(User.objects.all().values().exclude(username=username)) # get all users but me
+    user = User.objects.get(username=username)
+    profiles = list(UserProfile.objects.all().values().exclude(user=user))
+    users = list(User.objects.all().values().exclude(username=username))
     content = {
         'profiles': profiles,
         'users': users,
     }
     return JsonResponse(content, safe=False)
 
-def update(request): #similar to the register form
+'''Updates information about a specific user with new data'''
+def update(request):
     userID = request.POST['id']
     newUsername = request.POST['username']
     newFirstName = request.POST['firstName']
@@ -223,7 +238,8 @@ def update(request): #similar to the register form
 
     return JsonResponse({"success": True}, safe=False)
 
-@csrf_exempt #deletes the user profile using the ID
+'''Deletes the user profile using their ID'''
+@csrf_exempt
 def delete(request):
     body = json.loads(request.body.decode('utf-8'))
     item = body['id']
@@ -231,6 +247,7 @@ def delete(request):
     post.delete()
     return HttpResponse("success")
 
+'''Returns a list of other profiles after sorting them by the number of hobby matches'''
 def lookupMatches(request):
     count = 0;
     matches = {};
@@ -241,6 +258,7 @@ def lookupMatches(request):
     myHobbies = myProfile.hobby.all().values('name')
     myLikes = myProfile.profileLike.all().values('name')
 
+    #compares the logged in user's hobbies with other users and counts the number of matches there are
     theirProfiles = UserProfile.objects.all().exclude(user=me)
     for profile in theirProfiles:
         theirHobbies = profile.hobby.all().values('name')
@@ -262,7 +280,7 @@ def lookupMatches(request):
     userMatches = []
     userImages = []
     userProfiles = []
-    sortedV = sorted(matches.items(), key=operator.itemgetter(1), reverse=True)
+    sortedV = sorted(matches.items(), key=operator.itemgetter(1), reverse=True) #sorts the user profiles depending on the number of matches
     for key in sortedV:
         name, theirMatches = key
         users.append(name)
@@ -287,6 +305,7 @@ def lookupMatches(request):
 
     return JsonResponse(content, safe=False)
 
+'''Filters the profiles displayed depending on gender and age restrictions'''
 def filterMatches(request):
     count = 0;
     matches = {};
@@ -349,35 +368,32 @@ def filterMatches(request):
 
     return JsonResponse(content, safe=False)
 
-def calculateAge(DOB):
-    today = date.today()
-    return today.year - DOB.year - ((today.month, today.day) < (DOB.month, DOB.day))
 
+'''Keeps track of profile likes'''
 @csrf_exempt
 def userLikes(request):
     body = json.loads(request.body.decode('utf-8'))
     likedThemUsername = body['username']
     likerMeUsername = request.session['username']
 
-    #Creates a new user in the likes model if it doesn't exist already (person being liked)
+    #creates a new user in the likes model if it doesn't exist already (person being liked)
     try:
         newUser = Likes.objects.create(name=likedThemUsername)
         newUser.save()
     except:
         print("already exists")
 
-    #Me
+    #me
     likerMeUser = User.objects.get(username=likerMeUsername)
     likeMeProfile = UserProfile.objects.get(user=likerMeUser)
     liked = likeMeProfile.profileLike.all() #the profiles I have liked
 
-    #The profile being liked
+    #the profile being liked
     newUser = Likes.objects.get(name=likedThemUsername)
     likedThemUser = User.objects.get(username=likedThemUsername)
     likedThemProfile = UserProfile.objects.get(user=likedThemUser)
 
-    '''if the user has already liked the profile and presses the button again it dislikes it
-    and removes the user being disliked from the users profileLike list'''
+    #if the user has already liked the profile and presses the button again it dislikes it and removes the user being disliked from the users profileLike list
     for user in liked:
         if (str(user) == str(likedThemUsername)):
             likedThemProfile.likes = likedThemProfile.likes - 1
@@ -398,6 +414,7 @@ def userLikes(request):
     likeMeProfile.save()
     return JsonResponse({"success": "True"}, safe=False)
 
+'''Allows users to change their password'''
 def updatePassword(request):
     myUsername = request.session['username']
     currentPassword = request.POST['currentPassword']
