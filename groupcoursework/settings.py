@@ -25,8 +25,6 @@ SECRET_KEY = 'yhhe*e5d^d_9c=@7$&fy0=rc+_pp)p&9uj5l3+&l$10$$8vl(p'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', 'glacial-everglades-58260.herokuapp.com']
-
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # Application definition
 
