@@ -29,12 +29,12 @@ def settingsPage(request):
     return render(request,'matchingapp/settings.html')
 
 
-'''Makes a list of all the hobbies in a readable format'''
+'''Obtains the list of all the hobbies in JSON format to allow a user to select one or more when registering an account'''
 def getHobbies(request):
     hobbies = list(Hobby.objects.all().values())
     return JsonResponse(hobbies, safe=False)
 
-'''Checks that the username passed is in the current session'''
+'''Checks that the username passed is in the current session (meaning it checks if user is logged in)'''
 @csrf_exempt
 def authenticate(request):
     if 'username' in request.session:
@@ -52,7 +52,6 @@ def calculateAge(DOB):
 
 '''Registers a new user and does validation checks on the data inputted'''
 def registerUser(request):
-
     #converts all usernames to lowercase so there are not multiple users with the same username in different cases
     username = (request.POST["username"]).lower()
     email = request.POST["email"]
@@ -152,12 +151,11 @@ def login(request):
         data = [{"success":"false",  "message": "user does not exist"}]
         return JsonResponse(data, safe=False)
 
-'''Logs the user out by getting rid of user information held in memory'''
+'''Logs the user out by flushing the user's session'''
 @csrf_exempt
 def logout(request):
     if 'username' in request.session:
         request.session.flush()
-        print("---------USER LOGGED OUT------------------")
         data = [{"success":"true"}]
 
         return JsonResponse(data, safe=False)
@@ -166,7 +164,7 @@ def logout(request):
         data = [{"success":"false"}]
         return JsonResponse(data, safe=False)
 
-'''Loads information about a specific user'''
+'''Loads information about the currently logged-in user'''
 def loadUser(request):
     username = request.POST["username"]
     user = User.objects.get(username=username)
@@ -197,7 +195,7 @@ def loadUser(request):
     }]
     return JsonResponse(data, safe=False)
 
-'''Gets all the profiles of other users (excluding the user who is currently logged in)'''
+'''Gets all the profiles of other users (excluding the user who is currently logged in) so they can view profiles on homepage'''
 def getProfiles(request):
     username = request.session['username']
     user = User.objects.get(username=username)
@@ -209,7 +207,7 @@ def getProfiles(request):
     }
     return JsonResponse(content, safe=False)
 
-'''Updates information about a specific user with new data'''
+'''Updates information about the currently logged-in user'''
 def update(request):
     userID = request.POST['id']
     newUsername = request.POST['username']
@@ -248,7 +246,7 @@ def delete(request):
     post.delete()
     return HttpResponse("success")
 
-'''Returns a list of other profiles after sorting them by the number of hobby matches'''
+'''Returns a list of profiles after sorting them by the number of hobby matches, in descending order (users with most matches appear first) so logged-in user can view.'''
 def lookupMatches(request):
     count = 0;
     matches = {};
@@ -306,7 +304,7 @@ def lookupMatches(request):
 
     return JsonResponse(content, safe=False)
 
-'''Filters the profiles displayed depending on gender and age restrictions'''
+'''Filters the profiles displayed depending on gender and age restrictions. This function does the exact same as the lookupMatches (above), but just returns a different set of profiles for the filter the user applied '''
 def filterMatches(request):
     count = 0;
     matches = {};
@@ -321,7 +319,7 @@ def filterMatches(request):
     myHobbies = myProfile.hobby.all().values('name')
     myLikes = myProfile.profileLike.all().values('name')
 
-    theirProfiles = UserProfile.objects.filter(gender=gender).exclude(user=me)
+    theirProfiles = UserProfile.objects.filter(gender=gender).exclude(user=me) # get all profiles except for the currently logged in user's
 
     for profile in theirProfiles:
         theirAge = calculateAge(profile.dateOfBirth)
